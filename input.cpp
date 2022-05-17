@@ -22,7 +22,7 @@ address Alokasi(char ch)
 	}
 }
 
-address dealokasi(list *L)
+void dealokasi(list *L)
 {
 	address P, temp;
 	
@@ -67,7 +67,8 @@ void input_keyboard(list *L, int *baris, int *kolom)
 			break;
 		}else
 		
-		if(ch == 19){
+		if(ch == 19)
+		{
 			tampil_list(*L);
 			save(*L);
 			break;

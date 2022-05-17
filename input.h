@@ -39,6 +39,6 @@ void normal_input(list *L, address P, int *baris, int *kolom);
 void handling_input(list *L, char ch, int *baris, int *kolom);
 void arrows(list *L, char ch, int *baris, int *kolom);
 void enter(list *L, char ch, int *baris, int *kolom);
-address dealokasi(list *L);
+void dealokasi(list *L);
 
 #endif

@@ -98,7 +98,7 @@ void inputNamaFile(char karakter[25])
     while(1)
 	{
         /* Pengaturan agar karakter seragam (huruf kecil) */
-        ch = tolower(getch());
+        ch = getch();
 
         /* Jika menekan enter selesai */
         if(ch == 13 || ch == 10)
@@ -121,10 +121,14 @@ void inputNamaFile(char karakter[25])
                 karakter[array-1] = '\0';
                 array--;
             }
-        }
+        }else
+		// disable arrow 
+		if(ch == 72 || ch == 80 || ch == 75 || ch == 77){
+			continue;
+		}
 		
 		else if (	
-					ch == -32 or
+					(ch == -32) ||
 					!(ch >= 'a' && ch <= 'z') && 
 					!(ch >= 'A' && ch <= 'Z')
 				)
