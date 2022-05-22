@@ -241,7 +241,7 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	if (ch == 27)
 	{
 		// Modul ESC
-	}
+	}else
 	
 	// Delete
 	if (ch == 86)
@@ -416,6 +416,24 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 						*kolom = *kolom + 1;
 					}
 					*baris = *baris - 1;
+				}
+				gotoxy(*baris,*kolom);
+			}
+			break;
+		}
+		
+		// DELETE
+		case 83:
+		{
+			P = Current(*L);
+			if (Next(P) != NULL)
+			{
+				Current(*L) = Next(P);
+				*kolom = *kolom + 1;
+				if (Info(Current(*L)) == NULL)
+				{
+					*kolom = 0;
+					*baris = *baris + 1;
 				}
 				gotoxy(*baris,*kolom);
 			}

@@ -169,8 +169,8 @@ bool selectionMenu(list *L)
 				warna(7);
 				ListFile(&(*L));
 				duplicate();
-				modify(&(*L));
-				return false;
+				//modify(&(*L));
+				return true;
 			}
 			if(pilihan == 4)
 			{
@@ -209,7 +209,7 @@ bool selectionMenu(list *L)
 			
 			warna(7);
 			duplicate();
-			return false;
+			return true;
 		}else
 		
 		if(ch == 'q')

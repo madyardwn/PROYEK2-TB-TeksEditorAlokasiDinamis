@@ -11,6 +11,6 @@ bool txt_extension(char const *name);
 void inputNamaFile(char karakter[25]);
 
 //evic
-void duplicate();
+int duplicate();
 
 #endif

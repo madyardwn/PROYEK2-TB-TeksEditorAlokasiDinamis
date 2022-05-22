@@ -1,14 +1,11 @@
-#include <iostream>
-#include <fstream>
 #include <stdio.h>
 #include <windows.h>
 #include <dirent.h>
 #include <conio.h>
+#include <string.h>
 #include "input.h"
 #include "file.h"
 #include "design.h"
-
-using namespace std;
 
 bool txt_extension(char const *name)
 {
@@ -195,43 +192,55 @@ void modify(list *L)
 	}
 }
 
-void duplicate()
-{
+int duplicate()  /* -- referensi : https://www.youtube.com/watch?v=ceODxfZWZIo -- */
+{	
 	char kar, read[10], copy[10];
 
 	FILE *baca, *salin;
 	gotoxy(28,2);
-	printf("Nama file :"); //fflush(stdin);
-	bar();
+	printf("nama file :"); 
+	box(1,27,118,29);
 	gotoxy(28,14);
 	gets(read);
-	strcat(read,".txt"); fflush(stdin);
+	strcat(read,".txt");
 
 	gotoxy(28,2);
 	printf("Masukkan nama file baru :"); //fflush(stdin);
-	bar();
+	box(1,27,118,29);
 	gotoxy(28,28);
-	gets(copy); 
-	strcat(copy,".txt"); fflush(stdin);
-
+	gets(copy); //fflush(stdin);
+	strcat(copy,".txt"); //fflush(stdin);
 
 	baca = fopen(read, "r");
 	salin = fopen(copy, "w");
-
-
-	while((kar=fgetc(baca))!=EOF){
-	fputc(kar,salin);
-	}
 	
+	
+	//cek file ada atau ngga//
+	if(baca == NULL && copy == NULL || copy != NULL){
+		//remove(copy, ".txt");
+		fclose(baca);
+		fclose(salin);
+		gotoxy(28,2);
+		printf("File tidak tersedia!");
+		box(1,27,118,29);
+	}
+		system("pause");
+		
+
+	while((kar=fgetc(baca))!=EOF)
+	fputc(kar,salin);
+	
+		fclose(baca);
+		fclose(salin);
+		
 		if(fputc(kar,salin)){
 			gotoxy(28,2);
 			printf("berhasil di duplicate");
-			bar();
+			box(1,27,118,29);
 		}else{
-			gotoxy(28,2); fflush(stdin);
+			gotoxy(28,2);
 			printf("gagal duplicate");
-			bar();
+			box(1,27,118,29);
 		}
-	fclose(baca);
-	fclose(salin);
+		system("pause");
 }
