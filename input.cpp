@@ -108,6 +108,13 @@ bool cek_input(char ch)
 {
 	switch(ch)
 	{	
+		// F1-F12
+		case 0:
+		{
+			return true;
+			break;
+		}
+		
 		// Backspace
 		case 8:
 		{
@@ -203,6 +210,12 @@ void normal_input(list *L, address P, int *baris, int *kolom)
 
 void handling_input(list *L, char ch, int *baris, int *kolom)
 {
+	// F1-F12
+	if (ch == 0)
+	{
+		ch = getch();
+	}else
+	
 	// Backspace
 	if (ch == 8)
 	{
