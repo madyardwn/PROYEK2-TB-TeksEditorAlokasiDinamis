@@ -2,6 +2,9 @@
 #define design_H
 #include "input.h"
 
+#include <iostream>
+#include <fstream>
+
 void gotoxy(int baris,int kolom);
 void loading();
 void border();

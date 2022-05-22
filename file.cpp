@@ -1,10 +1,14 @@
+#include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <windows.h>
 #include <dirent.h>
-#include "conio.h"
+#include <conio.h>
 #include "input.h"
 #include "file.h"
 #include "design.h"
+
+using namespace std;
 
 bool txt_extension(char const *name)
 {
@@ -18,7 +22,6 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 	address P;
 	char namaFile[25];
 	char ch;
-	bool cek;
 	
 	gotoxy(28,2);
 	printf("Nama file : ");
@@ -30,41 +33,31 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 	
 	if(file == NULL)
 	{
+		fclose(file);
 		gotoxy(28,14);
 		printf("File tidak tersedia");
 		bar();
 		getch();
-		cek = false;
+		return false;
 	}
 	
-	else 
+	gotoxy(0,0);
+	system("cls");
+	while(!feof(file))
 	{
-		gotoxy(0,0);
-		system("cls");
-		while(!feof(file))
+		ch = fgetc(file);
+		if(ch == -1)
 		{
-			ch = fgetc(file);
-			if (ch == -1)
-			{
-				continue;
-			}
-			
-			if(ch == '\n')
-			{
-				enter(*(&L), NULL, *(&baris), *(&kolom));
-			}
-			
-			else
-			{
-				P = Alokasi(ch);
-				normal_input(*(&L), P, &(*baris), &(*kolom));
-			}
+			continue;
 		}
-		cek = true;
-		fclose(file);
+		
+		else{
+			P = Alokasi(ch);
+			normal_input(*(&L), P, &(*baris), &(*kolom));
+		}
 	}
-	
-	return cek;
+	fclose(file);
+	return true;
 }
 
 int ListFile(list *L)
@@ -183,16 +176,8 @@ void save(list L)
 	strcat(namaFile,".txt");
 	file = fopen(namaFile, "w");
 	while(P != NULL)
-	{	
-		if(Info(P) == NULL)
-		{
-			fprintf(file, "%c", '\n');
-		}
-		
-		else
-		{
-			fprintf(file, "%c", Info(P));
-		}
+	{
+		fprintf(file, "%c", Info(P));
 		P = Next(P);
 	}
 	fclose(file);
@@ -205,7 +190,48 @@ void modify(list *L)
 	int kolom = 0;
 	
 	fileTersedia = fileToList(&(*L), &baris, &kolom, fileTersedia);
-	if(fileTersedia){
+	if(fileTersedia == true){
 		input_keyboard(&(*L), &baris, &kolom);
 	}
+}
+
+void duplicate()
+{
+	char kar, read[10], copy[10];
+
+	FILE *baca, *salin;
+	gotoxy(28,2);
+	printf("Nama file :"); //fflush(stdin);
+	bar();
+	gotoxy(28,14);
+	gets(read);
+	strcat(read,".txt"); fflush(stdin);
+
+	gotoxy(28,2);
+	printf("Masukkan nama file baru :"); //fflush(stdin);
+	bar();
+	gotoxy(28,28);
+	gets(copy); 
+	strcat(copy,".txt"); fflush(stdin);
+
+
+	baca = fopen(read, "r");
+	salin = fopen(copy, "w");
+
+
+	while((kar=fgetc(baca))!=EOF){
+	fputc(kar,salin);
+	}
+	
+		if(fputc(kar,salin)){
+			gotoxy(28,2);
+			printf("berhasil di duplicate");
+			bar();
+		}else{
+			gotoxy(28,2); fflush(stdin);
+			printf("gagal duplicate");
+			bar();
+		}
+	fclose(baca);
+	fclose(salin);
 }

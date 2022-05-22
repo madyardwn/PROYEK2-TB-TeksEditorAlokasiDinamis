@@ -1,8 +1,11 @@
+#include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <conio.h>
 #include <windows.h>
+
 #include "input.h"
 #include "design.h"
 #include "file.h"
@@ -108,13 +111,6 @@ bool cek_input(char ch)
 {
 	switch(ch)
 	{	
-		// F1-F12
-		case 0:
-		{
-			return true;
-			break;
-		}
-		
 		// Backspace
 		case 8:
 		{
@@ -150,6 +146,13 @@ bool cek_input(char ch)
 			break;
 		}
 		
+		// delete
+		case 86:
+		{
+			return true;
+			break;
+		}
+		
 		// Normal
 		default:
 		{
@@ -177,10 +180,6 @@ void normal_input(list *L, address P, int *baris, int *kolom)
 		Prev(P) = Current(*L);
 		Tail(*L) = P;
 		Current(*L) = P;
-		if(Info(P) == NULL)
-		{
-			return;
-		}
 	}
 	
 	// Tampil Layar
@@ -214,12 +213,6 @@ void normal_input(list *L, address P, int *baris, int *kolom)
 
 void handling_input(list *L, char ch, int *baris, int *kolom)
 {
-	// F1-F12
-	if (ch == 0)
-	{
-		ch = getch();
-	}else
-	
 	// Backspace
 	if (ch == 8)
 	{
@@ -229,7 +222,7 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	// Enter
 	if (ch == 13)
 	{
-		enter(*(&L), NULL, *(&baris), *(&kolom));
+		enter(*(&L), ch, *(&baris), *(&kolom));
 	}else
 	
 	// Arrows
@@ -248,6 +241,12 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	if (ch == 27)
 	{
 		// Modul ESC
+	}
+	
+	// Delete
+	if (ch == 86)
+	{
+		del(*(&L), ch, *(&baris), *(&kolom));
 	}
 }
 
@@ -434,7 +433,7 @@ void enter(list *L, char ch, int *baris, int *kolom)
 {
 	address P;
 	
-	P = Alokasi(ch);
+	P = Alokasi(NULL);
 	if (Next(Current(*L)) != NULL)
 	{
 		Prev(P) = Current(*L);
@@ -471,4 +470,9 @@ void enter(list *L, char ch, int *baris, int *kolom)
 	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
 	bar();
 	gotoxy(*baris,*kolom);
+}
+
+void del(list *L, char ch, int *baris, int *kolom)
+{
+	
 }
