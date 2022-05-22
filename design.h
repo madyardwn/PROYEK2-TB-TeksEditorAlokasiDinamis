@@ -11,7 +11,7 @@ void menu();
 void displayLogo();
 void color(int color);
 bool selectionMenu(list *L);
-void tampil_list(list L);
+void tampil_list(list *L);
 void bar();
 
 #endif

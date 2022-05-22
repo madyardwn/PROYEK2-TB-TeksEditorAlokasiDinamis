@@ -69,8 +69,7 @@ void input_keyboard(list *L, int *baris, int *kolom)
 		
 		if(ch == 19)
 		{
-			tampil_list(*L);
-			save(*L);
+			save(&(*L));
 			break;
 		}
 		

@@ -166,7 +166,7 @@ bool selectionMenu(list *L)
 		}else 
 		
 		/* Shortcut */
-		if(ch == 'i')
+		if(ch == 'i' || ch == 'I')
 		{
 			int baris = 0, kolom = 0;
 			
@@ -177,7 +177,7 @@ bool selectionMenu(list *L)
 			return true;
 		}else 
 		
-		if(ch == 'o')
+		if(ch == 'o' || ch == 'O')
 		{
 			system("cls");
 			
@@ -187,7 +187,7 @@ bool selectionMenu(list *L)
 			return true;
 		}else 
 		
-		if(ch == 'q')
+		if(ch == 'q' || ch == 'Q')
 		{
 			system("cls");
 			
@@ -283,11 +283,11 @@ void gotoxy(int baris,int kolom)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
 }
 
-void tampil_list(list L)
+void tampil_list(list *L)
 {	
 	system("cls");
 	address P;
-	P = Next(Head(L));
+	P = Next(Head(*L));
 	
 	while(P != NULL)
 	{

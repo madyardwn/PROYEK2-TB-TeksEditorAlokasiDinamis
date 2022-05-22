@@ -67,7 +67,7 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 	return cek;
 }
 
-int ListFile(list *L)
+void ListFile(list *L)
 {
 	system("cls");
 	int jumlah = 1;
@@ -95,7 +95,6 @@ int ListFile(list *L)
 	{
 		printf("\nERROR: Folder tidak ditemukan!");
 	}
-    return 0;
 }
 
 void inputNamaFile(char karakter[25])
@@ -112,13 +111,18 @@ void inputNamaFile(char karakter[25])
         ch = getch();
 
         /* Jika menekan enter selesai */
-        if(ch == 13 || ch == 10)
+       	if(ch == 13 && strlen(karakter)>0)
 		{
             break;
-        }
+        }else
+        
+		if(ch == 0)
+        {
+        	ch = getch();
+		}else
 
         /* Jika menekan backspace mengahapus karakter */
-        else if(ch == 8 || ch == 127)
+        if(ch == 8 || ch == 127)
 		{
             /* Jika line berada di line awal pengahpusan tidak bekerja */
             if(array <= 0)
@@ -133,21 +137,24 @@ void inputNamaFile(char karakter[25])
                 array--;
             }
         }else
+		
 		// disable arrow 
 		if(ch == 72 || ch == 80 || ch == 75 || ch == 77){
 			continue;
-		}
+		}else 
 		
-		else if (	
-					(ch == -32) ||
-					!(ch >= 'a' && ch <= 'z') && 
-					!(ch >= 'A' && ch <= 'Z')
-				)
+		if(	
+				(ch == -32) || (ch == 10) ||
+				!(ch >= 'a' && ch <= 'z') && 
+				!(ch >= 'A' && ch <= 'Z') &&
+				!(ch >= '0' && ch <= '9') &&
+				!(ch == 10)
+			)
 		{
         	continue;
 		}
 		
-        else
+		else
 		{
             /* Jika batas karakter yang dinput sama dengan 25 tidak dapat menginput lagi */
         	if(strlen(karakter)>=24)
@@ -167,35 +174,89 @@ void inputNamaFile(char karakter[25])
     karakter[array] = '\0';
 }
 
-void save(list L)
+bool cekNama(char namaFile[25])
+{
+	char cwd[PATH_MAX];
+    struct dirent *d;
+    DIR *dr;
+    
+    getcwd(cwd, sizeof(cwd));
+    dr = opendir(cwd);
+    if(dr!=NULL)
+    {
+        for(d=readdir(dr); d!=NULL; d=readdir(dr))
+        {
+        	if(txt_extension(d->d_name))
+			{
+				if(!strcmp(namaFile,d->d_name))
+				{
+					
+					return false;
+				}
+			}
+        }
+        closedir(dr);
+    }
+    else
+    {
+    	printf("Directory tidak ada");
+	}
+	return true;
+}
+
+void save(list *L)
 {
 	char namaFile[25], ch;
 	address P;
 	FILE *file;
+	bool available = true;
 	
-	P = Next(Head(L));
-
-	gotoxy(28,2);
-	printf("Nama file : ");
-	bar();
-	gotoxy(28,14);
-	inputNamaFile(namaFile);
-	strcat(namaFile,".txt");
-	file = fopen(namaFile, "w");
-	while(P != NULL)
-	{	
-		if(Info(P) == NULL)
+	while(1)
+	{		
+		system("cls");
+		tampil_list(&(*L));
+		gotoxy(28,2);
+		printf("Nama file : ");
+		bar();
+		gotoxy(28,14);
+		inputNamaFile(namaFile);
+		strcat(namaFile,".txt");
+		available = cekNama(namaFile);
+		
+		if(available)
 		{
-			fprintf(file, "%c", '\n');
+			file = fopen(namaFile, "w");
+			
+			P = Next(Head(*L));
+			while(P != NULL)
+			{	
+				if(Info(P) == NULL)
+				{
+					fprintf(file, "%c", '\n');
+				}
+				
+				else
+				{
+					fprintf(file, "%c", Info(P));
+				}
+				P = Next(P);
+			}
+			fclose(file);
+			break;
 		}
 		
 		else
 		{
-			fprintf(file, "%c", Info(P));
+			system("cls");
+			tampil_list(&(*L));
+			gotoxy(28,2);
+			printf("Nama file : ");
+			gotoxy(28,14);
+			printf("Nama File tidak tersedia");
+			bar();
+			getch();
 		}
-		P = Next(P);
 	}
-	fclose(file);
 }
 
 void modify(list *L)
