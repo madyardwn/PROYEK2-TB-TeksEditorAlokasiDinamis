@@ -177,6 +177,10 @@ void normal_input(list *L, address P, int *baris, int *kolom)
 		Prev(P) = Current(*L);
 		Tail(*L) = P;
 		Current(*L) = P;
+		if(Info(P) == NULL)
+		{
+			return;
+		}
 	}
 	
 	// Tampil Layar
@@ -225,7 +229,7 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	// Enter
 	if (ch == 13)
 	{
-		enter(*(&L), ch, *(&baris), *(&kolom));
+		enter(*(&L), NULL, *(&baris), *(&kolom));
 	}else
 	
 	// Arrows
@@ -430,7 +434,7 @@ void enter(list *L, char ch, int *baris, int *kolom)
 {
 	address P;
 	
-	P = Alokasi(NULL);
+	P = Alokasi(ch);
 	if (Next(Current(*L)) != NULL)
 	{
 		Prev(P) = Current(*L);

@@ -18,6 +18,7 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 	address P;
 	char namaFile[25];
 	char ch;
+	bool cek;
 	
 	gotoxy(28,2);
 	printf("Nama file : ");
@@ -29,39 +30,41 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 	
 	if(file == NULL)
 	{
-		fclose(file);
 		gotoxy(28,14);
 		printf("File tidak tersedia");
 		bar();
 		getch();
-		return false;
+		cek = false;
 	}
 	
-	gotoxy(0,0);
-	system("cls");
-	while(!feof(file))
+	else 
 	{
-		ch = fgetc(file);
-		if(ch == -1)
+		gotoxy(0,0);
+		system("cls");
+		while(!feof(file))
 		{
-			continue;
-		}else
-		
-		if(ch == '\n')
-		{
-			printf("\n");
-			*baris = *baris + 1;
-			*kolom = 0;
+			ch = fgetc(file);
+			if (ch == -1)
+			{
+				continue;
+			}
+			
+			if(ch == '\n')
+			{
+				enter(*(&L), NULL, *(&baris), *(&kolom));
+			}
+			
+			else
+			{
+				P = Alokasi(ch);
+				normal_input(*(&L), P, &(*baris), &(*kolom));
+			}
 		}
-		
-		else
-		{
-			P = Alokasi(ch);
-			normal_input(*(&L), P, &(*baris), &(*kolom));
-		}
+		cek = true;
+		fclose(file);
 	}
-	fclose(file);
-	return true;
+	
+	return cek;
 }
 
 int ListFile(list *L)
@@ -180,7 +183,7 @@ void save(list L)
 	strcat(namaFile,".txt");
 	file = fopen(namaFile, "w");
 	while(P != NULL)
-	{
+	{	
 		if(Info(P) == NULL)
 		{
 			fprintf(file, "%c", '\n');
@@ -202,7 +205,7 @@ void modify(list *L)
 	int kolom = 0;
 	
 	fileTersedia = fileToList(&(*L), &baris, &kolom, fileTersedia);
-	if(fileTersedia == true){
+	if(fileTersedia){
 		input_keyboard(&(*L), &baris, &kolom);
 	}
 }
