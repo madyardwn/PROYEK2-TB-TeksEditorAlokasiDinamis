@@ -45,9 +45,17 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 		if(ch == -1)
 		{
 			continue;
+		}else
+		
+		if(ch == '\n')
+		{
+			printf("\n");
+			*baris = *baris + 1;
+			*kolom = 0;
 		}
 		
-		else{
+		else
+		{
 			P = Alokasi(ch);
 			normal_input(*(&L), P, &(*baris), &(*kolom));
 		}
@@ -173,7 +181,15 @@ void save(list L)
 	file = fopen(namaFile, "w");
 	while(P != NULL)
 	{
-		fprintf(file, "%c", Info(P));
+		if(Info(P) == NULL)
+		{
+			fprintf(file, "%c", '\n');
+		}
+		
+		else
+		{
+			fprintf(file, "%c", Info(P));
+		}
 		P = Next(P);
 	}
 	fclose(file);
