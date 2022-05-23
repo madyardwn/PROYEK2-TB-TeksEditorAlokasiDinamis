@@ -222,7 +222,7 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	// Backspace
 	if (ch == 8)
 	{
-		// Modul Backspace
+		backspace(*(&L), NULL, *(&baris), *(&kolom));
 	}else
 	
 	// Enter
@@ -252,7 +252,7 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 
 void arrows(list *L, char ch, int *baris, int *kolom)
 {
-	address P;
+	address P,Q;
 	int count = 0;
 	ch = getch();
 	
@@ -422,6 +422,40 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 			break;
 		}
 		
+		//Delete
+		case 83:
+		{	
+			P = Current(*L);
+			if (Next(P) != NULL)
+			{
+				Q = Next(P);
+				if (Next(Next(P)) != NULL)
+				{
+					Prev(Next(Next(P))) = P;
+					Next(P) = Next(Next(P));
+					free(Q);
+				}else{
+					Next(P) = NULL;
+					free(Q);
+				}
+				
+				// Print Layar
+				P = Next(Head(*L));
+				system("cls");
+				while(P != NULL)
+				{
+					printf("%c", Info(P));
+					if (Info(P) == NULL)
+					{
+						printf("\n");
+					}
+					P = Next(P);
+				}	
+			}
+			gotoxy(*baris,*kolom);		
+			break;
+		}
+		
 		default:
 		{
 			break;
@@ -469,5 +503,92 @@ void enter(list *L, char ch, int *baris, int *kolom)
 	gotoxy(28,2);
 	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
 	bar();
+	gotoxy(*baris,*kolom);
+}
+
+void backspace(list *L, char ch, int *baris, int *kolom)
+{
+	address P;
+	int count = 0;
+	
+	P = Current(*L);
+	if (Current(*L) != Head(*L))
+	{
+		if (Next(P) != NULL)
+		{
+			Prev(Next(P)) = Prev(P);
+			Next(Prev(P)) = Next(P);
+			Current(*L) = Prev(P);
+			free(P);
+		}else{
+			Next(Prev(P)) = NULL;
+			Current(*L) = Prev(P);
+			free(P);
+		}
+						
+		if (*kolom != 0)
+		{
+			*kolom = *kolom - 1;
+		}else{
+			P = Current(*L);
+			if (Info(P) != NULL)
+			{
+				P = Prev(P);
+			}
+			
+			while (Info(P) != NULL)
+			{
+				count = count + 1;
+				P = Prev(P);
+			}
+			*baris = *baris - 1;
+			if (count == 0)
+			{
+				*kolom = count;
+			}else{
+				*kolom = count + 1;
+			}
+		}
+	}
+	
+	// Print Layar	
+//	if (*kolom != 0)
+//	{
+//		gotoxy(*baris,*kolom-1);
+//		P = Current(*L);
+//		count = 0;
+//		while(P != NULL)
+//		{
+//			printf("%c", Info(P));
+//			if (Info(P) == NULL)
+//			{
+//				printf("\n");
+//			}
+//			P = Next(P);
+//			count++;
+//		}	
+//		
+//		for(int i=0; i<= count; i++)
+//		{
+//			printf(" ");
+//		}
+//		
+//	}else{
+		P = Next(Head(*L));
+		system("cls");
+		while(P != NULL)
+		{
+			printf("%c", Info(P));
+			if (Info(P) == NULL)
+			{
+				printf("\n");
+			}
+			P = Next(P);
+		}
+//	}
+	
+	gotoxy(28,2);
+	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
+	bar();	
 	gotoxy(*baris,*kolom);
 }

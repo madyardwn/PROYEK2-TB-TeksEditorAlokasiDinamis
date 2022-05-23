@@ -6,6 +6,7 @@
 #include "design.h"
 #include "input.h"
 #include "file.h"
+#include "themes.h"
 
 void warna(int color)
 {
@@ -90,7 +91,7 @@ void bar()
 
 bool selectionMenu(list *L)
 {
-	int opsiWarna[4] = {7,7,7,7};
+	int opsiWarna[5] = {7,7,7,7,7};
 	int pilihan = 1;
 	char ch;
 	
@@ -111,6 +112,10 @@ bool selectionMenu(list *L)
 		
 		gotoxy(21,5);
 		warna(opsiWarna[3]);
+		printf("	[T] Theme Text Editor");
+		
+		gotoxy(22,5);
+		warna(opsiWarna[4]);
 		printf("	[Q] Quit Text Editor");
 		
 		ch = getch();
@@ -129,7 +134,7 @@ bool selectionMenu(list *L)
 		
 		if(ch == 80)
 		{
-			if(pilihan == 4)
+			if(pilihan == 5)
 			{
 				continue;
 			}
@@ -175,6 +180,16 @@ bool selectionMenu(list *L)
 			if(pilihan == 4)
 			{
 				system("cls");
+
+				warna(7);
+				menu_themes();
+				
+				return true;
+			}
+			
+			if(pilihan == 5)
+			{
+				system("cls");
 				
 				warna(7);
 				return false;
@@ -214,18 +229,27 @@ bool selectionMenu(list *L)
 			return true;
 		}else 
 		
+		if(ch == 't' || ch == 'T')
+		{
+			system("cls");
+			warna(7);
+			menu_themes();
+			return true;
+		}else
+		
 		if(ch == 'q' || ch == 'Q')
 		{
 			system("cls");
 			
 			warna(7);
 			return false;
-		}
+		}else
 		
 		opsiWarna[0] = 7;
 		opsiWarna[1] = 7;
 		opsiWarna[2] = 7;
 		opsiWarna[3] = 7;
+		opsiWarna[4] = 7;
 		
 		if(pilihan == 1)
 		{
@@ -241,9 +265,15 @@ bool selectionMenu(list *L)
 		{
 			opsiWarna[2] = 13;
 		}
+		
 		if(pilihan == 4)
 		{
 			opsiWarna[3] = 13;
+		}
+		
+		if(pilihan == 5)
+		{
+			opsiWarna[4] = 13;
 		}
 	}
 }
