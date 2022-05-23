@@ -34,7 +34,7 @@ int main()
 {
 	list L;
 	bool loop = true;
-	loading();
+//	loading();
 	
 	adjustWindowSize();
 	
