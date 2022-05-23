@@ -90,7 +90,7 @@ void bar()
 
 bool selectionMenu(list *L)
 {
-	int opsiWarna[3] = {7,7,7};
+	int opsiWarna[4] = {7,7,7,7};
 	int pilihan = 1;
 	char ch;
 	
@@ -107,6 +107,10 @@ bool selectionMenu(list *L)
 		
 		gotoxy(20,5);
 		warna(opsiWarna[2]);
+		printf("	[D] Duplicate File");
+		
+		gotoxy(21,5);
+		warna(opsiWarna[3]);
 		printf("	[Q] Quit Text Editor");
 		
 		ch = getch();
@@ -125,7 +129,7 @@ bool selectionMenu(list *L)
 		
 		if(ch == 80)
 		{
-			if(pilihan == 3)
+			if(pilihan == 4)
 			{
 				continue;
 			}
@@ -156,13 +160,26 @@ bool selectionMenu(list *L)
 				modify(&(*L));
 				return true;
 			}
+			
 			if(pilihan == 3)
+			{
+				system("cls");
+				
+				warna(7);
+				ListFile(&(*L));
+				duplicate();
+				
+				return true;
+			}
+			
+			if(pilihan == 4)
 			{
 				system("cls");
 				
 				warna(7);
 				return false;
 			}
+			
 		}else 
 		
 		/* Shortcut */
@@ -185,6 +202,16 @@ bool selectionMenu(list *L)
 			ListFile(&(*L));
 			modify(&(*L));
 			return true;
+		}else
+		
+		if(ch == 'd' || ch == 'D')
+		{
+			system("cls");
+			
+			warna(7);
+			ListFile(&(*L));
+			duplicate();
+			return true;
 		}else 
 		
 		if(ch == 'q' || ch == 'Q')
@@ -194,9 +221,12 @@ bool selectionMenu(list *L)
 			warna(7);
 			return false;
 		}
+		
 		opsiWarna[0] = 7;
 		opsiWarna[1] = 7;
 		opsiWarna[2] = 7;
+		opsiWarna[3] = 7;
+		
 		if(pilihan == 1)
 		{
 			opsiWarna[0] = 13;
@@ -210,6 +240,10 @@ bool selectionMenu(list *L)
 		if(pilihan == 3)
 		{
 			opsiWarna[2] = 13;
+		}
+		if(pilihan == 4)
+		{
+			opsiWarna[3] = 13;
 		}
 	}
 }

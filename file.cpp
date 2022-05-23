@@ -270,3 +270,67 @@ void modify(list *L)
 		input_keyboard(&(*L), &baris, &kolom);
 	}
 }
+
+void duplicate()  /* -- referensi : https://www.youtube.com/watch?v=ceODxfZWZIo -- */
+{	
+	char kar, read[25], copy[25];
+	bool availableAfter = true;
+	bool availableBefore = true;
+	FILE *baca, *salin;
+	gotoxy(28,2);
+	printf("nama file :"); 
+	box(1,27,118,29);
+	gotoxy(28,14);
+	inputNamaFile(read);
+	strcat(read,".txt");
+	
+	availableBefore = cekNama(read);
+	if(availableBefore == true){
+		//remove(copy, ".txt");
+		gotoxy(28,2);
+		printf("File tidak tersedia!");
+		box(1,27,118,29);
+		getch();
+		return;
+	}
+	baca = fopen(read, "r");
+	
+	gotoxy(28,2);
+	printf("                                            "); //fflush(stdin);
+	gotoxy(28,2);
+	printf("nama file baru :"); //fflush(stdin);
+	box(1,27,118,29);
+	gotoxy(28,18);
+	
+	inputNamaFile(copy);
+	strcat(copy,".txt"); //fflush(stdin);
+	availableAfter = cekNama(copy);
+	
+	//cek file ada atau ngga//
+	if(baca == NULL || availableAfter == false){
+		//remove(copy, ".txt");
+		gotoxy(28,2);
+		printf("Nama file tidak tersedia!");
+		box(1,27,118,29);
+		getch();
+		return;
+	}
+	
+	salin = fopen(copy, "w");
+	while((kar=fgetc(baca))!=EOF)
+	fputc(kar,salin);
+	
+	fclose(baca);
+	fclose(salin);
+	
+	if(fputc(kar,salin)){
+		gotoxy(28,2);
+		printf("berhasil di duplicate");
+		box(1,27,118,29);
+	}else{
+		gotoxy(28,2);
+		printf("gagal duplicate");
+		box(1,27,118,29);
+	}
+	system("pause");
+}
