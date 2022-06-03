@@ -12,6 +12,8 @@ void displayLogo();
 void color(int color);
 bool selectionMenu(list *L);
 void tampil_list(list *L);
-void bar();
+void barInput(int *baris, int *kolom);
+void barMenu();
+void clear();
 
 #endif

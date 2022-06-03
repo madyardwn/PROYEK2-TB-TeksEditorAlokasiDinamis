@@ -8,35 +8,43 @@
 #include "file.h"
 #include "themes.h"
 
+#define WHITE 7
+#define LIGHTM 13
+#define FIRST_MENU 1
+#define LAST_MENU 5
+#define UP 72
+#define DOWN 80
+#define ENTER 13
+
 void warna(int color)
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
-void box(int y1,int x1,int y2,int x2) 	// x baris, y kolom
+void box(int x1,int y1,int x2,int y2) 	// x kolom, y baris
 {										
    int i;
-   for(i=y1;i<=y2;i++)
+   for(i=x1;i<=x2;i++)
     {
-		gotoxy(x1,i);
+		gotoxy(y1,i);
 		printf("%c",196);
-		gotoxy(x2,i);
+		gotoxy(y2,i);
 		printf("%c",196);
     }
-   	for(i=x1;i<=x2;i++)
+   	for(i=y1;i<=y2;i++)
     {
-		gotoxy(i,y1);
+		gotoxy(i,x1);
 		printf("%c",179);
-		gotoxy(i,y2);
+		gotoxy(i,x2);
 		printf("%c",179);
     }
-	gotoxy(x1,y1);
+	gotoxy(y1,x1);
 	printf("%c",218);
-	gotoxy(x2,y1);
+	gotoxy(y2,x1);
 	printf("%c",192);
-	gotoxy(x1,y2);
+	gotoxy(y1,x2);
 	printf("%c",191);
-	gotoxy(x2,y2);
+	gotoxy(y2,x2);
 	printf("%c",217);
 }
 
@@ -72,7 +80,7 @@ void displayLogo()
 	printf("   |||      |||||   |||      |||   |||   |||      |||           |||     |||          |||   \n");
 	printf("   |||       ||||   ||||||||||||  |||     |||     |||     |||   |||||||||||   ||||||||||   \n");
 	printf(" 																						   \n");
-	warna(7);
+	warna(WHITE);
 	printf("                                       TEXT EDITOR                                     	   \n");
 	printf("                                                                                           \n");
 	gotoxy(16,3);
@@ -84,20 +92,33 @@ void displayLogo()
 	box(1,1,90,26);
 }
 
-void bar()
+void barInput(int *baris, int *kolom)
+{
+	box(1,27,118,29);
+	gotoxy(28,2);
+	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
+}
+
+void barMenu()
 {
 	box(1,27,118,29);
 }
-
 bool selectionMenu(list *L)
 {
-	int opsiWarna[5] = {7,7,7,7,7};
-	int pilihan = 1;
-	char ch;
+	/* --- Kamus Data --- */
+	int opsiWarna[5] = {WHITE, WHITE, WHITE, WHITE, WHITE}; // Array warna mula-mula
+	int pilihan = 1; // penanda posisi
+	char ch; // penampung input
 	
+	/* --- Algoritma --- */
+	
+	/* Menampilkan Menu */
+	menu();
+	
+	/* Loop untuk menentukan posisi dengan tanda berupa warna */
 	while(1)
 	{
-		/* Selection */
+		/* -- Selection -- */
 		gotoxy(18,5);
 		warna(opsiWarna[0]);
 		printf("	[I] Insert Text\n");
@@ -118,162 +139,200 @@ bool selectionMenu(list *L)
 		warna(opsiWarna[4]);
 		printf("	[Q] Quit Text Editor");
 		
+		
+		/* - Proses Insert Arrow - */
 		ch = getch();
-		if(ch == 72)
+		
+		/* Tombol UP */
+		if(ch == UP)
 		{
-			if(pilihan == 1)
+			/* Move ke menu terakhir jika sudah mentok di paling atas */
+			if(pilihan == FIRST_MENU)
 			{
-				continue;
+				pilihan = LAST_MENU;
 			}
 			
+			/* Move ke atas satu baris */
 			else
 			{
 				pilihan--;
 			}
 		}
 		
-		if(ch == 80)
+		/* Tombol Bawah */
+		if(ch == DOWN)
 		{
-			if(pilihan == 5)
+			/* Move ke menu awal jika sudah mentok di paling bawah */
+			if(pilihan == LAST_MENU)
 			{
-				continue;
+				pilihan = FIRST_MENU;
 			}
+			
+			/* Move satu baris ke bawah */
 			else
 			{
 				pilihan++;
 			}
 		}
 		
-		if(ch == 13)
+		/* Tombol Enter : untuk accept pilihan*/
+		if(ch == ENTER)
 		{
+			/* Menulis Tulisan */
 			if(pilihan == 1)
 			{
+				/*Variable Local*/
 				int baris = 0, kolom = 0;
 				
-				system("cls");
+				system("cls"); // Clear Screen
 				
-				warna(7);
-				input_keyboard(&(*L), &baris, &kolom);
-				return true;
+				warna(WHITE); // Mengembalikan warna menjadi normal 
+				input_keyboard(&(*L), &baris, &kolom); // Modul Insert --> Save File or Exit
+				
+				return true; // Return True : untuk menampilkan menu kembali
 			}
+			
+			/* Modifikasi tulisan yang sudah tersimpan */
 			if(pilihan == 2)
 			{
-				system("cls");
+				system("cls"); // Clear Screen
 				
-				warna(7);
-				ListFile(&(*L));
-				modify(&(*L));
-				return true;
+				warna(WHITE); // Mengembalikan warna menjadi normal 
+				ListFile(&(*L)); // Menampilkan daftar file
+				modify(&(*L)); // Melakukan modifikasi terhadap file yang dibuka
+				
+				return true; // Return True : untuk menampilkan menu kembali
+			}
+			
+			/* Menduplikasi file yang sudah tersimpan */
+			if(pilihan == 3)
+			{
+				system("cls"); // Clear Screen 
+				
+				warna(WHITE); // Mengembalikan warna menjadi normal 
+				ListFile(&(*L)); // Menampilkan daftar file 
+				duplicate(); // Memilih kemudian menduplikasi file
+				
+				return true; // Return True : untuk menampilkan menu kembali
+			}
+			
+			/* Mengganti Menu */
+			if(pilihan == 4)
+			{
+				system("cls"); // Clear Screen 
+
+				warna(WHITE); // Mengembalikan warna menjadi normal 
+				menu_themes(); // Masuk ke menu theme
+				
+				return true; // Return True : untuk menampilkan menu kembali
+			}
+			
+			/* Exit */
+			if(pilihan == 5)
+			{
+				system("cls"); // Clear Screen
+				
+				warna(WHITE); // Mengembalikan warna menjadi normal 
+				
+				return false; // Return False : untuk berhenti menampilkan Menu kemudia Exit
+			}
+			
+		}else 
+		
+		/*  -- Shortcut -- */
+		
+		/* Tombol I : Insert */
+		if(ch == 'i' || ch == 'I')
+		{
+			/* Variable Local */
+			int baris = 0, kolom = 0;
+			
+			system("cls"); // Clear Screen
+			
+			warna(WHITE); // Mengembalikan warna menjadi normal 
+			input_keyboard(&(*L), &baris, &kolom); // Modul Insert --> Save File or Exit
+			
+			return true; // Return True untuk menampilkan menu kembali
+		}else 
+		
+		/* Tombol O : Open */
+		if(ch == 'o' || ch == 'O')
+		{
+			system("cls"); // Clear Screen
+			
+			warna(WHITE); // Mengembalikan warna menjadi normal 
+			ListFile(&(*L)); // Menampilkan daftar file
+			modify(&(*L)); // Melakukan modifikasi terhadap file yang dibuka
+			
+			return true; // Return True untuk menampilkan menu kembali
+		}else
+		
+		/* Tombol D : Duplikasi */
+		if(ch == 'd' || ch == 'D')
+		{
+			system("cls"); // Clear Screen
+			
+			warna(WHITE); // Mengembalikan warna menjadi normal 
+			ListFile(&(*L)); // Menampilkan daftar file
+			duplicate(); // Memilih kemudian menduplikasi file
+			
+			return true; // Return True untuk menampilkan menu kembali
+		}else 
+		
+		/* Tombol T : Theme */
+		if(ch == 't' || ch == 'T')
+		{
+			system("cls"); // Clear Screen
+			warna(WHITE); // Mengembalikan warna menjadi normal 
+			menu_themes(); // Masuk ke menu theme
+			
+			return true; // Return True untuk menampilkan menu kembali
+		}else
+		
+		/* Tombol Q : Quit */
+		if(ch == 'q' || ch == 'Q')
+		{
+			system("cls"); // Clear Screen
+			
+			warna(WHITE); // Mengembalikan warna menjadi normal 
+			
+			return false; // Return True untuk menampilkan menu kembali
+		}
+		
+		/* Restart Warna */
+		else
+		{
+			opsiWarna[0] = WHITE; // Mengembalikan warna menjadi normal 
+			opsiWarna[1] = WHITE; // Mengembalikan warna menjadi normal 
+			opsiWarna[2] = WHITE; // Mengembalikan warna menjadi normal 
+			opsiWarna[3] = WHITE; // Mengembalikan warna menjadi normal 
+			opsiWarna[4] = WHITE; // Mengembalikan warna menjadi normal 
+			
+			/* -- Merubah Warna Sesuai Pilihan --*/
+			if(pilihan == 1)
+			{
+				opsiWarna[0] = LIGHTM;
+			}
+			
+			if(pilihan == 2)
+			{
+				opsiWarna[1] = LIGHTM;
 			}
 			
 			if(pilihan == 3)
 			{
-				system("cls");
-				
-				warna(7);
-				ListFile(&(*L));
-				duplicate();
-				
-				return true;
+				opsiWarna[2] = LIGHTM;
 			}
 			
 			if(pilihan == 4)
 			{
-				system("cls");
-
-				warna(7);
-				menu_themes();
-				
-				return true;
+				opsiWarna[3] = LIGHTM;
 			}
 			
 			if(pilihan == 5)
 			{
-				system("cls");
-				
-				warna(7);
-				return false;
+				opsiWarna[4] = LIGHTM;
 			}
-			
-		}else 
-		
-		/* Shortcut */
-		if(ch == 'i' || ch == 'I')
-		{
-			int baris = 0, kolom = 0;
-			
-			system("cls");
-			
-			warna(7);
-			input_keyboard(&(*L), &baris, &kolom);
-			return true;
-		}else 
-		
-		if(ch == 'o' || ch == 'O')
-		{
-			system("cls");
-			
-			warna(7);
-			ListFile(&(*L));
-			modify(&(*L));
-			return true;
-		}else
-		
-		if(ch == 'd' || ch == 'D')
-		{
-			system("cls");
-			
-			warna(7);
-			ListFile(&(*L));
-			duplicate();
-			return true;
-		}else 
-		
-		if(ch == 't' || ch == 'T')
-		{
-			system("cls");
-			warna(7);
-			menu_themes();
-			return true;
-		}else
-		
-		if(ch == 'q' || ch == 'Q')
-		{
-			system("cls");
-			
-			warna(7);
-			return false;
-		}else
-		
-		opsiWarna[0] = 7;
-		opsiWarna[1] = 7;
-		opsiWarna[2] = 7;
-		opsiWarna[3] = 7;
-		opsiWarna[4] = 7;
-		
-		if(pilihan == 1)
-		{
-			opsiWarna[0] = 13;
-		}
-		
-		if(pilihan == 2)
-		{
-			opsiWarna[1] = 13;
-		}
-		
-		if(pilihan == 3)
-		{
-			opsiWarna[2] = 13;
-		}
-		
-		if(pilihan == 4)
-		{
-			opsiWarna[3] = 13;
-		}
-		
-		if(pilihan == 5)
-		{
-			opsiWarna[4] = 13;
 		}
 	}
 }
@@ -283,7 +342,7 @@ void menu()
 	system("cls");
 	displayLogo();
 	creadit();
-	bar();
+	barMenu();
 }
 
 void loading()
@@ -362,4 +421,46 @@ void tampil_list(list *L)
 		}
 		P = Next(P);
 	}
+}
+
+void clear()
+{
+    /* Origin : https://docs.microsoft.com/en-us/windows/console/clearing-the-screen */
+    /* Dengan penyesuaian */
+    HANDLE hStdout;
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    SMALL_RECT scrollRect;
+    COORD scrollTarget;
+    CHAR_INFO fill;
+
+    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    // Get the number of character cells in the current buffer.
+    if (!GetConsoleScreenBufferInfo(hStdout, &csbi))
+    {
+        return;
+    }
+
+    // Scroll the rectangle of the entire buffer.
+    scrollRect.Left = 0;
+    scrollRect.Top = 1;
+    scrollRect.Right = csbi.dwSize.X;
+    scrollRect.Bottom = csbi.dwSize.Y;
+
+    // Scroll it upwards off the top of the buffer with a magnitude of the entire height.
+    scrollTarget.X = 0;
+    scrollTarget.Y = (SHORT)(0 - csbi.dwSize.Y);
+
+    // Fill with empty spaces with the buffer's default text attribute.
+    fill.Char.UnicodeChar = TEXT(' ');
+    fill.Attributes = csbi.wAttributes;
+
+    // Do the scroll
+    ScrollConsoleScreenBuffer(hStdout, &scrollRect, NULL, scrollTarget, &fill);
+
+    // Move the cursor to the top left corner too.
+    csbi.dwCursorPosition.X = 0;
+    csbi.dwCursorPosition.Y = 0;
+
+    SetConsoleCursorPosition(hStdout, csbi.dwCursorPosition);
 }

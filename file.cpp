@@ -16,13 +16,13 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 {
 	FILE *file;
 	address P;
-	char namaFile[25];
+	char namaFile[30];
 	char ch;
 	bool cek;
 	
 	gotoxy(28,2);
 	printf("Nama file : ");
-	bar();
+	barMenu();
 	gotoxy(28,14);
 	inputNamaFile(namaFile);
 	strcat(namaFile,".txt");
@@ -32,7 +32,7 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 	{
 		gotoxy(28,14);
 		printf("File tidak tersedia");
-		bar();
+		barMenu();
 		getch();
 		cek = false;
 	}
@@ -72,7 +72,7 @@ void ListFile(list *L)
 	system("cls");
 	int jumlah = 1;
 	char cwd[PATH_MAX];
-	char pilihFile[25];
+	char pilihFile[30];
     struct dirent *d;
     DIR *dr;
     
@@ -97,7 +97,7 @@ void ListFile(list *L)
 	}
 }
 
-void inputNamaFile(char karakter[25])
+void inputNamaFile(char karakter[30])
 {
     /* Kamus Data Lokal*/
     char ch;                        // variable penampung input karakter
@@ -157,7 +157,7 @@ void inputNamaFile(char karakter[25])
 		else
 		{
             /* Jika batas karakter yang dinput sama dengan 25 tidak dapat menginput lagi */
-        	if(strlen(karakter)>=24)
+        	if(strlen(karakter)>=25)
 			{
             	continue;
 			}
@@ -174,7 +174,7 @@ void inputNamaFile(char karakter[25])
     karakter[array] = '\0';
 }
 
-bool cekNama(char namaFile[25])
+bool cekNama(char namaFile[30])
 {
 	char cwd[PATH_MAX];
     struct dirent *d;
@@ -206,7 +206,7 @@ bool cekNama(char namaFile[25])
 
 void save(list *L)
 {
-	char namaFile[25], ch;
+	char namaFile[30], ch;
 	address P;
 	FILE *file;
 	bool available = true;
@@ -217,7 +217,7 @@ void save(list *L)
 		tampil_list(&(*L));
 		gotoxy(28,2);
 		printf("Nama file : ");
-		bar();
+		barMenu();
 		gotoxy(28,14);
 		inputNamaFile(namaFile);
 		strcat(namaFile,".txt");
@@ -253,7 +253,7 @@ void save(list *L)
 			printf("Nama file : ");
 			gotoxy(28,14);
 			printf("Nama File tidak tersedia");
-			bar();
+			barMenu();
 			getch();
 		}
 	}
@@ -332,5 +332,5 @@ void duplicate()  /* -- referensi : https://www.youtube.com/watch?v=ceODxfZWZIo 
 		printf("gagal duplicate");
 		box(1,27,118,29);
 	}
-	system("pause");
+	getch();
 }

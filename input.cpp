@@ -47,44 +47,43 @@ void create_text_editor(list *L)
 
 void input_keyboard(list *L, int *baris, int *kolom)
 {
-	// Kamus Data
-	char ch;
-	bool validasi_input;
-	address P;
+	/* --- Kamus Data --- */ 
+	char ch; // variable penampung input
+	bool validasi_input; // variable untuk menerima hasil pengecekan tipe input
+	address P; // variable penampung address suatu node
 	
-	gotoxy(28,2);
-	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
-	bar();
+	/* --- Algoritma --- */
+	barInput(&(*baris), &(*kolom));
 	gotoxy(*baris,*kolom);
 	
 	while (1)
 	{
 		ch = getch();
 		
-		// ctrl + q untuk keluar text editor
+		/* ctrl + q : untuk (membatalkan pengetikan) kembali ke menu */
 		if (ch == 17)
 		{
 			break;
 		}else
 		
+		/* ctrl + s : untuk Save */
 		if(ch == 19)
 		{
 			save(&(*L));
 			break;
 		}
 		
-		// Cek Validasi Input
+		/* Cek Validasi Input */
 		validasi_input = cek_input(ch);
 		
-		// Jika tidak perlu di handling, maka input normal
+		/* Jika tidak perlu di handling, maka input normal */ 
 		if (validasi_input != true)
 		{
 			P = Alokasi(ch);
 			if (P != NULL)
 			{
 				normal_input(*(&L), P, &(*baris), &(*kolom));
-				gotoxy(28,2);
-				printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
+				barInput(&(*baris), &(*kolom));
 				gotoxy(*baris,*kolom);
 			}
 			
@@ -94,13 +93,13 @@ void input_keyboard(list *L, int *baris, int *kolom)
 			}
 		}
 		
-		// Jika perlu di handling, maka input di handle terlebih dahulu
+		/* Jika perlu di handling, maka input di handle terlebih dahulu */
 		else
 		{
 			handling_input(*(&L), ch, &(*baris), &(*kolom));
 		}
 	}
-	dealokasi(&(*L));
+	dealokasi(&(*L)); // membersihkan memori setelah selesai input
 }
 
 bool cek_input(char ch)
@@ -181,20 +180,6 @@ void normal_input(list *L, address P, int *baris, int *kolom)
 			return;
 		}
 	}
-	
-	// Tampil Layar
-//	system("cls");
-//	P = Next(Head(*L));
-//	
-//	while(P != NULL)
-//	{
-//		printf("%c", Info(P));
-//		if (Info(P) == NULL)
-//		{
-//			printf("\n");
-//		}
-//		P = Next(P);
-//	}
 	
 	P = Current(*L);
 	while(P != NULL)
@@ -500,9 +485,7 @@ void enter(list *L, char ch, int *baris, int *kolom)
 	
 	*baris = *baris + 1;
 	*kolom = 0;
-	gotoxy(28,2);
-	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
-	bar();
+	barInput(&(*baris), &(*kolom));
 	gotoxy(*baris,*kolom);
 }
 
@@ -550,45 +533,19 @@ void backspace(list *L, char ch, int *baris, int *kolom)
 			}
 		}
 	}
-	
-	// Print Layar	
-//	if (*kolom != 0)
-//	{
-//		gotoxy(*baris,*kolom-1);
-//		P = Current(*L);
-//		count = 0;
-//		while(P != NULL)
-//		{
-//			printf("%c", Info(P));
-//			if (Info(P) == NULL)
-//			{
-//				printf("\n");
-//			}
-//			P = Next(P);
-//			count++;
-//		}	
-//		
-//		for(int i=0; i<= count; i++)
-//		{
-//			printf(" ");
-//		}
-//		
-//	}else{
-		P = Next(Head(*L));
-		system("cls");
-		while(P != NULL)
+
+	P = Next(Head(*L));
+	system("cls");
+	while(P != NULL)
+	{
+		printf("%c", Info(P));
+		if (Info(P) == NULL)
 		{
-			printf("%c", Info(P));
-			if (Info(P) == NULL)
-			{
-				printf("\n");
-			}
-			P = Next(P);
+			printf("\n");
 		}
-//	}
+		P = Next(P);
+	}
 	
-	gotoxy(28,2);
-	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
-	bar();	
+	barInput(&(*baris), &(*kolom));
 	gotoxy(*baris,*kolom);
 }
