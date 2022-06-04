@@ -41,5 +41,6 @@ void arrows(list *L, char ch, int *baris, int *kolom);
 void enter(list *L, char ch, int *baris, int *kolom);
 void dealokasi(list *L);
 void backspace(list *L, char ch, int *baris, int *kolom);
+void input_keyboardModify(list *L, int *baris, int *kolom, char namaFile[30]);
 
 #endif

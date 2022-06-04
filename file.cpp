@@ -12,20 +12,13 @@ bool txt_extension(char const *name)
     return len > 4 && strcmp(name + len - 4, ".txt") == 0;
 }
 
-bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
+bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia, char namaFile[30])
 {
 	FILE *file;
 	address P;
-	char namaFile[30];
 	char ch;
 	bool cek;
 	
-	gotoxy(28,2);
-	printf("Nama file : ");
-	barMenu();
-	gotoxy(28,14);
-	inputNamaFile(namaFile);
-	strcat(namaFile,".txt");
 	file = fopen(namaFile, "r");
 	
 	if(file == NULL)
@@ -214,13 +207,17 @@ void save(list *L)
 	while(1)
 	{		
 		system("cls");
+		
 		tampil_list(&(*L));
+		
 		gotoxy(28,2);
 		printf("Nama file : ");
 		barMenu();
+		
 		gotoxy(28,14);
 		inputNamaFile(namaFile);
 		strcat(namaFile,".txt");
+		
 		available = cekNama(namaFile);
 		
 		if(available)
@@ -248,9 +245,12 @@ void save(list *L)
 		else
 		{
 			system("cls");
+			
 			tampil_list(&(*L));
+			
 			gotoxy(28,2);
 			printf("Nama file : ");
+			
 			gotoxy(28,14);
 			printf("Nama File tidak tersedia");
 			barMenu();
@@ -259,15 +259,60 @@ void save(list *L)
 	}
 }
 
+void saveModify(list *L, char namaFile[30])
+{
+	address P;
+	FILE *file;
+	
+	while(1)
+	{		
+		tampil_list(&(*L));
+		
+		file = fopen(namaFile, "w");
+		
+		P = Next(Head(*L));
+		while(P != NULL)
+		{	
+			if(Info(P) == NULL)
+			{
+				fprintf(file, "%c", '\n');
+			}
+			
+			else
+			{
+				fprintf(file, "%c", Info(P));
+			}
+			P = Next(P);
+		}
+		fclose(file);
+		
+		barMenu();
+		gotoxy(28,2);
+		printf("File berhasil disimpan");
+		getch();
+		
+		break;
+	}
+}
+
 void modify(list *L)
 {
 	bool fileTersedia = false;
 	int baris = 0;
 	int kolom = 0;
+	char namaFile[30];
 	
-	fileTersedia = fileToList(&(*L), &baris, &kolom, fileTersedia);
+	gotoxy(28,2);
+	printf("Nama file : ");
+	barMenu();
+	
+	gotoxy(28,14);
+	inputNamaFile(namaFile);
+	strcat(namaFile,".txt");
+	
+	fileTersedia = fileToList(&(*L), &baris, &kolom, fileTersedia, namaFile);
 	if(fileTersedia){
-		input_keyboard(&(*L), &baris, &kolom);
+		input_keyboardModify(&(*L), &baris, &kolom, namaFile);
 	}
 }
 

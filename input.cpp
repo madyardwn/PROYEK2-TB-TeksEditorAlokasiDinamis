@@ -102,6 +102,63 @@ void input_keyboard(list *L, int *baris, int *kolom)
 	dealokasi(&(*L)); // membersihkan memori setelah selesai input
 }
 
+void input_keyboardModify(list *L, int *baris, int *kolom, char namaFile[30])
+{
+	/* --- Kamus Data --- */ 
+	char ch; // variable penampung input
+	bool validasi_input; // variable untuk menerima hasil pengecekan tipe input
+	address P; // variable penampung address suatu node
+	
+	/* --- Algoritma --- */
+	barInput(&(*baris), &(*kolom), true);
+	gotoxy(*baris,*kolom);
+	
+	while (1)
+	{
+		ch = getch();
+		
+		/* ctrl + q : untuk (membatalkan pengetikan) kembali ke menu */
+		if (ch == 17)
+		{
+			break;
+		}else
+		
+		/* ctrl + s : untuk Save */
+		if(ch == 19)
+		{
+			saveModify(&(*L), namaFile);
+			break;
+		}
+		
+		/* Cek Validasi Input */
+		validasi_input = cek_input(ch);
+		
+		/* Jika tidak perlu di handling, maka input normal */ 
+		if (validasi_input != true)
+		{
+			P = Alokasi(ch);
+			if (P != NULL)
+			{
+				normal_input(*(&L), P, &(*baris), &(*kolom));
+				barInput(&(*baris), &(*kolom), false);
+				gotoxy(*baris,*kolom);
+			}
+			
+			else
+			{
+				Beep(1000,50);
+			}
+		}
+		
+		/* Jika perlu di handling, maka input di handle terlebih dahulu */
+		else
+		{
+			handling_input(*(&L), ch, &(*baris), &(*kolom));
+		}
+	}
+	dealokasi(&(*L)); // membersihkan memori setelah selesai input
+}
+
 bool cek_input(char ch)
 {
 	switch(ch)
