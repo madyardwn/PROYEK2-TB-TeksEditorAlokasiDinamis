@@ -92,9 +92,12 @@ void displayLogo()
 	box(1,1,90,26);
 }
 
-void barInput(int *baris, int *kolom)
+void barInput(int *baris, int *kolom, int reset)
 {
-	box(1,27,118,29);
+	if(reset)
+	{
+		box(1,27,118,29);
+	}
 	gotoxy(28,2);
 	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
 }

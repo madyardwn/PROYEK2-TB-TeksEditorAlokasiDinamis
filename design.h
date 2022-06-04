@@ -12,7 +12,7 @@ void displayLogo();
 void color(int color);
 bool selectionMenu(list *L);
 void tampil_list(list *L);
-void barInput(int *baris, int *kolom);
+void barInput(int *baris, int *kolom, int reset);
 void barMenu();
 void clear();
 

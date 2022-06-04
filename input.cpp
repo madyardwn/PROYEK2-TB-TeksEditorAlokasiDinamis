@@ -53,7 +53,7 @@ void input_keyboard(list *L, int *baris, int *kolom)
 	address P; // variable penampung address suatu node
 	
 	/* --- Algoritma --- */
-	barInput(&(*baris), &(*kolom));
+	barInput(&(*baris), &(*kolom), true);
 	gotoxy(*baris,*kolom);
 	
 	while (1)
@@ -83,7 +83,7 @@ void input_keyboard(list *L, int *baris, int *kolom)
 			if (P != NULL)
 			{
 				normal_input(*(&L), P, &(*baris), &(*kolom));
-				barInput(&(*baris), &(*kolom));
+				barInput(&(*baris), &(*kolom), false);
 				gotoxy(*baris,*kolom);
 			}
 			
@@ -485,7 +485,7 @@ void enter(list *L, char ch, int *baris, int *kolom)
 	
 	*baris = *baris + 1;
 	*kolom = 0;
-	barInput(&(*baris), &(*kolom));
+	barInput(&(*baris), &(*kolom), true);
 	gotoxy(*baris,*kolom);
 }
 
@@ -546,6 +546,6 @@ void backspace(list *L, char ch, int *baris, int *kolom)
 		P = Next(P);
 	}
 	
-	barInput(&(*baris), &(*kolom));
+	barInput(&(*baris), &(*kolom), true);
 	gotoxy(*baris,*kolom);
 }
