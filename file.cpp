@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include <dirent.h>
-#include <conio.h>
-#include <string.h>
+#include "conio.h"
 #include "input.h"
 #include "file.h"
 #include "design.h"
@@ -19,6 +18,7 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 	address P;
 	char namaFile[25];
 	char ch;
+	bool cek;
 	
 	gotoxy(28,2);
 	printf("Nama file : ");
@@ -30,34 +30,44 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia)
 	
 	if(file == NULL)
 	{
-		fclose(file);
 		gotoxy(28,14);
 		printf("File tidak tersedia");
 		bar();
 		getch();
-		return false;
+		cek = false;
 	}
 	
-	gotoxy(0,0);
-	system("cls");
-	while(!feof(file))
+	else 
 	{
-		ch = fgetc(file);
-		if(ch == -1)
+		gotoxy(0,0);
+		system("cls");
+		while(!feof(file))
 		{
-			continue;
+			ch = fgetc(file);
+			if (ch == -1)
+			{
+				continue;
+			}
+			
+			if(ch == '\n')
+			{
+				enter(*(&L), NULL, *(&baris), *(&kolom));
+			}
+			
+			else
+			{
+				P = Alokasi(ch);
+				normal_input(*(&L), P, &(*baris), &(*kolom));
+			}
 		}
-		
-		else{
-			P = Alokasi(ch);
-			normal_input(*(&L), P, &(*baris), &(*kolom));
-		}
+		cek = true;
+		fclose(file);
 	}
-	fclose(file);
-	return true;
+	
+	return cek;
 }
 
-int ListFile(list *L)
+void ListFile(list *L)
 {
 	system("cls");
 	int jumlah = 1;
@@ -85,7 +95,6 @@ int ListFile(list *L)
 	{
 		printf("\nERROR: Folder tidak ditemukan!");
 	}
-    return 0;
 }
 
 void inputNamaFile(char karakter[25])
@@ -102,13 +111,18 @@ void inputNamaFile(char karakter[25])
         ch = getch();
 
         /* Jika menekan enter selesai */
-        if(ch == 13 || ch == 10)
+       	if(ch == 13 && strlen(karakter)>0)
 		{
             break;
-        }
+        }else
+        
+		if(ch == 0)
+        {
+        	ch = getch();
+		}else
 
         /* Jika menekan backspace mengahapus karakter */
-        else if(ch == 8 || ch == 127)
+        if(ch == 8 || ch == 127)
 		{
             /* Jika line berada di line awal pengahpusan tidak bekerja */
             if(array <= 0)
@@ -123,21 +137,24 @@ void inputNamaFile(char karakter[25])
                 array--;
             }
         }else
+		
 		// disable arrow 
 		if(ch == 72 || ch == 80 || ch == 75 || ch == 77){
 			continue;
-		}
+		}else 
 		
-		else if (	
-					(ch == -32) ||
-					!(ch >= 'a' && ch <= 'z') && 
-					!(ch >= 'A' && ch <= 'Z')
-				)
+		if(	
+				(ch == -32) || (ch == 10) ||
+				!(ch >= 'a' && ch <= 'z') && 
+				!(ch >= 'A' && ch <= 'Z') &&
+				!(ch >= '0' && ch <= '9') &&
+				!(ch == 10)
+			)
 		{
         	continue;
 		}
 		
-        else
+		else
 		{
             /* Jika batas karakter yang dinput sama dengan 25 tidak dapat menginput lagi */
         	if(strlen(karakter)>=24)
@@ -157,27 +174,89 @@ void inputNamaFile(char karakter[25])
     karakter[array] = '\0';
 }
 
-void save(list L)
+bool cekNama(char namaFile[25])
+{
+	char cwd[PATH_MAX];
+    struct dirent *d;
+    DIR *dr;
+    
+    getcwd(cwd, sizeof(cwd));
+    dr = opendir(cwd);
+    if(dr!=NULL)
+    {
+        for(d=readdir(dr); d!=NULL; d=readdir(dr))
+        {
+        	if(txt_extension(d->d_name))
+			{
+				if(!strcmp(namaFile,d->d_name))
+				{
+					
+					return false;
+				}
+			}
+        }
+        closedir(dr);
+    }
+    else
+    {
+    	printf("Directory tidak ada");
+	}
+	return true;
+}
+
+void save(list *L)
 {
 	char namaFile[25], ch;
 	address P;
 	FILE *file;
+	bool available = true;
 	
-	P = Next(Head(L));
-
-	gotoxy(28,2);
-	printf("Nama file : ");
-	bar();
-	gotoxy(28,14);
-	inputNamaFile(namaFile);
-	strcat(namaFile,".txt");
-	file = fopen(namaFile, "w");
-	while(P != NULL)
-	{
-		fprintf(file, "%c", Info(P));
-		P = Next(P);
+	while(1)
+	{		
+		system("cls");
+		tampil_list(&(*L));
+		gotoxy(28,2);
+		printf("Nama file : ");
+		bar();
+		gotoxy(28,14);
+		inputNamaFile(namaFile);
+		strcat(namaFile,".txt");
+		available = cekNama(namaFile);
+		
+		if(available)
+		{
+			file = fopen(namaFile, "w");
+			
+			P = Next(Head(*L));
+			while(P != NULL)
+			{	
+				if(Info(P) == NULL)
+				{
+					fprintf(file, "%c", '\n');
+				}
+				
+				else
+				{
+					fprintf(file, "%c", Info(P));
+				}
+				P = Next(P);
+			}
+			fclose(file);
+			break;
+		}
+		
+		else
+		{
+			system("cls");
+			tampil_list(&(*L));
+			gotoxy(28,2);
+			printf("Nama file : ");
+			gotoxy(28,14);
+			printf("Nama File tidak tersedia");
+			bar();
+			getch();
+		}
 	}
-	fclose(file);
 }
 
 void modify(list *L)
@@ -187,60 +266,71 @@ void modify(list *L)
 	int kolom = 0;
 	
 	fileTersedia = fileToList(&(*L), &baris, &kolom, fileTersedia);
-	if(fileTersedia == true){
+	if(fileTersedia){
 		input_keyboard(&(*L), &baris, &kolom);
 	}
 }
 
-int duplicate()  /* -- referensi : https://www.youtube.com/watch?v=ceODxfZWZIo -- */
+void duplicate()  /* -- referensi : https://www.youtube.com/watch?v=ceODxfZWZIo -- */
 {	
-	char kar, read[10], copy[10];
-
+	char kar, read[25], copy[25];
+	bool availableAfter = true;
+	bool availableBefore = true;
 	FILE *baca, *salin;
 	gotoxy(28,2);
 	printf("nama file :"); 
 	box(1,27,118,29);
 	gotoxy(28,14);
-	gets(read);
+	inputNamaFile(read);
 	strcat(read,".txt");
-
-	gotoxy(28,2);
-	printf("Masukkan nama file baru :"); //fflush(stdin);
-	box(1,27,118,29);
-	gotoxy(28,28);
-	gets(copy); //fflush(stdin);
-	strcat(copy,".txt"); //fflush(stdin);
-
-	baca = fopen(read, "r");
-	salin = fopen(copy, "w");
 	
-	
-	//cek file ada atau ngga//
-	if(baca == NULL && copy == NULL || copy != NULL){
+	availableBefore = cekNama(read);
+	if(availableBefore == true){
 		//remove(copy, ".txt");
-		fclose(baca);
-		fclose(salin);
 		gotoxy(28,2);
 		printf("File tidak tersedia!");
 		box(1,27,118,29);
+		getch();
+		return;
 	}
-		system("pause");
-		
-
+	baca = fopen(read, "r");
+	
+	gotoxy(28,2);
+	printf("                                            "); //fflush(stdin);
+	gotoxy(28,2);
+	printf("nama file baru :"); //fflush(stdin);
+	box(1,27,118,29);
+	gotoxy(28,18);
+	
+	inputNamaFile(copy);
+	strcat(copy,".txt"); //fflush(stdin);
+	availableAfter = cekNama(copy);
+	
+	//cek file ada atau ngga//
+	if(baca == NULL || availableAfter == false){
+		//remove(copy, ".txt");
+		gotoxy(28,2);
+		printf("Nama file tidak tersedia!");
+		box(1,27,118,29);
+		getch();
+		return;
+	}
+	
+	salin = fopen(copy, "w");
 	while((kar=fgetc(baca))!=EOF)
 	fputc(kar,salin);
 	
-		fclose(baca);
-		fclose(salin);
-		
-		if(fputc(kar,salin)){
-			gotoxy(28,2);
-			printf("berhasil di duplicate");
-			box(1,27,118,29);
-		}else{
-			gotoxy(28,2);
-			printf("gagal duplicate");
-			box(1,27,118,29);
-		}
-		system("pause");
+	fclose(baca);
+	fclose(salin);
+	
+	if(fputc(kar,salin)){
+		gotoxy(28,2);
+		printf("berhasil di duplicate");
+		box(1,27,118,29);
+	}else{
+		gotoxy(28,2);
+		printf("gagal duplicate");
+		box(1,27,118,29);
+	}
+	system("pause");
 }

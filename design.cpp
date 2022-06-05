@@ -1,5 +1,3 @@
-#include <iostream>
-#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
@@ -8,6 +6,7 @@
 #include "design.h"
 #include "input.h"
 #include "file.h"
+#include "themes.h"
 
 void warna(int color)
 {
@@ -92,7 +91,7 @@ void bar()
 
 bool selectionMenu(list *L)
 {
-	int opsiWarna[4] = {7,7,7,7};
+	int opsiWarna[5] = {7,7,7,7,7};
 	int pilihan = 1;
 	char ch;
 	
@@ -113,6 +112,10 @@ bool selectionMenu(list *L)
 		
 		gotoxy(21,5);
 		warna(opsiWarna[3]);
+		printf("	[T] Theme Text Editor");
+		
+		gotoxy(22,5);
+		warna(opsiWarna[4]);
 		printf("	[Q] Quit Text Editor");
 		
 		ch = getch();
@@ -131,7 +134,7 @@ bool selectionMenu(list *L)
 		
 		if(ch == 80)
 		{
-			if(pilihan == 3)
+			if(pilihan == 5)
 			{
 				continue;
 			}
@@ -162,6 +165,7 @@ bool selectionMenu(list *L)
 				modify(&(*L));
 				return true;
 			}
+			
 			if(pilihan == 3)
 			{
 				system("cls");
@@ -169,20 +173,32 @@ bool selectionMenu(list *L)
 				warna(7);
 				ListFile(&(*L));
 				duplicate();
-				//modify(&(*L));
+				
 				return true;
 			}
+			
 			if(pilihan == 4)
+			{
+				system("cls");
+
+				warna(7);
+				menu_themes();
+				
+				return true;
+			}
+			
+			if(pilihan == 5)
 			{
 				system("cls");
 				
 				warna(7);
 				return false;
 			}
+			
 		}else 
 		
 		/* Shortcut */
-		if(ch == 'i')
+		if(ch == 'i' || ch == 'I')
 		{
 			int baris = 0, kolom = 0;
 			
@@ -193,7 +209,7 @@ bool selectionMenu(list *L)
 			return true;
 		}else 
 		
-		if(ch == 'o')
+		if(ch == 'o' || ch == 'O')
 		{
 			system("cls");
 			
@@ -201,28 +217,40 @@ bool selectionMenu(list *L)
 			ListFile(&(*L));
 			modify(&(*L));
 			return true;
-		}else 
+		}else
 		
-		if(ch == 'd')
+		if(ch == 'd' || ch == 'D')
 		{
 			system("cls");
 			
 			warna(7);
+			ListFile(&(*L));
 			duplicate();
+			return true;
+		}else 
+		
+		if(ch == 't' || ch == 'T')
+		{
+			system("cls");
+			warna(7);
+			menu_themes();
 			return true;
 		}else
 		
-		if(ch == 'q')
+		if(ch == 'q' || ch == 'Q')
 		{
 			system("cls");
 			
 			warna(7);
 			return false;
-		}
+		}else
+		
 		opsiWarna[0] = 7;
 		opsiWarna[1] = 7;
 		opsiWarna[2] = 7;
 		opsiWarna[3] = 7;
+		opsiWarna[4] = 7;
+		
 		if(pilihan == 1)
 		{
 			opsiWarna[0] = 13;
@@ -241,6 +269,11 @@ bool selectionMenu(list *L)
 		if(pilihan == 4)
 		{
 			opsiWarna[3] = 13;
+		}
+		
+		if(pilihan == 5)
+		{
+			opsiWarna[4] = 13;
 		}
 	}
 }
@@ -272,14 +305,34 @@ void loading()
 	printf("\t========================================================================================== \n");
 	printf("\t=====                                   TEXT EDITOR                                    === \n");
 	printf("\t========================================================================================== \n\n");
-	printf("\t                                       PLEASE WAIT . . .                                   \n\n");
-	Sleep(800);
-	printf("\t                                         >>> 3 <<<                                         \n\n");
-	Sleep(1000);
-	printf("\t                                         >>> 2 <<<                                         \n\n");
-	Sleep(1000);
-	printf("\t                                         >>> 1 <<<                                         \n\n");
-	Sleep(1000);
+	
+	system("color 0F");
+  
+    // Initialize char for printing
+    // loading bar
+    char a = 177, b = 219;
+  
+    //printf("\n\n\n\n");
+    printf("\t\t\t\t\t"
+           "Loading...\n\n");
+    printf("\t\t\t\t\t");
+  
+    // Print initial loading bar
+    for (int i = 0; i < 26; i++)
+        printf("%c", a);
+  
+    // Set the cursor again starting
+    // point of loading bar
+    printf("\r");
+    printf("\t\t\t\t\t");
+  
+    // Print loading bar progress
+    for (int i = 0; i < 26; i++) {
+        printf("%c", b);
+  
+        // Sleep for 1 second
+        Sleep(30);
+    }
 	system("cls");
 }
 
@@ -314,11 +367,11 @@ void gotoxy(int baris,int kolom)
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coord);
 }
 
-void tampil_list(list L)
+void tampil_list(list *L)
 {	
 	system("cls");
 	address P;
-	P = Next(Head(L));
+	P = Next(Head(*L));
 	
 	while(P != NULL)
 	{

@@ -1,11 +1,8 @@
-#include <iostream>
-#include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <conio.h>
 #include <windows.h>
-
 #include "input.h"
 #include "design.h"
 #include "file.h"
@@ -72,8 +69,7 @@ void input_keyboard(list *L, int *baris, int *kolom)
 		
 		if(ch == 19)
 		{
-			tampil_list(*L);
-			save(*L);
+			save(&(*L));
 			break;
 		}
 		
@@ -111,6 +107,13 @@ bool cek_input(char ch)
 {
 	switch(ch)
 	{	
+		// F1-F12
+		case 0:
+		{
+			return true;
+			break;
+		}
+		
 		// Backspace
 		case 8:
 		{
@@ -146,13 +149,6 @@ bool cek_input(char ch)
 			break;
 		}
 		
-		// delete
-		case 86:
-		{
-			return true;
-			break;
-		}
-		
 		// Normal
 		default:
 		{
@@ -180,6 +176,10 @@ void normal_input(list *L, address P, int *baris, int *kolom)
 		Prev(P) = Current(*L);
 		Tail(*L) = P;
 		Current(*L) = P;
+		if(Info(P) == NULL)
+		{
+			return;
+		}
 	}
 	
 	// Tampil Layar
@@ -213,16 +213,22 @@ void normal_input(list *L, address P, int *baris, int *kolom)
 
 void handling_input(list *L, char ch, int *baris, int *kolom)
 {
+	// F1-F12
+	if (ch == 0)
+	{
+		ch = getch();
+	}else
+	
 	// Backspace
 	if (ch == 8)
 	{
-		// Modul Backspace
+		backspace(*(&L), NULL, *(&baris), *(&kolom));
 	}else
 	
 	// Enter
 	if (ch == 13)
 	{
-		enter(*(&L), ch, *(&baris), *(&kolom));
+		enter(*(&L), NULL, *(&baris), *(&kolom));
 	}else
 	
 	// Arrows
@@ -241,18 +247,12 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	if (ch == 27)
 	{
 		// Modul ESC
-	}else
-	
-	// Delete
-	if (ch == 86)
-	{
-		del(*(&L), ch, *(&baris), *(&kolom));
 	}
 }
 
 void arrows(list *L, char ch, int *baris, int *kolom)
 {
-	address P;
+	address P,Q;
 	int count = 0;
 	ch = getch();
 	
@@ -422,21 +422,37 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 			break;
 		}
 		
-		// DELETE
+		//Delete
 		case 83:
-		{
+		{	
 			P = Current(*L);
 			if (Next(P) != NULL)
 			{
-				Current(*L) = Next(P);
-				*kolom = *kolom + 1;
-				if (Info(Current(*L)) == NULL)
+				Q = Next(P);
+				if (Next(Next(P)) != NULL)
 				{
-					*kolom = 0;
-					*baris = *baris + 1;
+					Prev(Next(Next(P))) = P;
+					Next(P) = Next(Next(P));
+					free(Q);
+				}else{
+					Next(P) = NULL;
+					free(Q);
 				}
-				gotoxy(*baris,*kolom);
+				
+				// Print Layar
+				P = Next(Head(*L));
+				system("cls");
+				while(P != NULL)
+				{
+					printf("%c", Info(P));
+					if (Info(P) == NULL)
+					{
+						printf("\n");
+					}
+					P = Next(P);
+				}	
 			}
+			gotoxy(*baris,*kolom);		
 			break;
 		}
 		
@@ -451,7 +467,7 @@ void enter(list *L, char ch, int *baris, int *kolom)
 {
 	address P;
 	
-	P = Alokasi(NULL);
+	P = Alokasi(ch);
 	if (Next(Current(*L)) != NULL)
 	{
 		Prev(P) = Current(*L);
@@ -490,7 +506,89 @@ void enter(list *L, char ch, int *baris, int *kolom)
 	gotoxy(*baris,*kolom);
 }
 
-void del(list *L, char ch, int *baris, int *kolom)
+void backspace(list *L, char ch, int *baris, int *kolom)
 {
+	address P;
+	int count = 0;
 	
+	P = Current(*L);
+	if (Current(*L) != Head(*L))
+	{
+		if (Next(P) != NULL)
+		{
+			Prev(Next(P)) = Prev(P);
+			Next(Prev(P)) = Next(P);
+			Current(*L) = Prev(P);
+			free(P);
+		}else{
+			Next(Prev(P)) = NULL;
+			Current(*L) = Prev(P);
+			free(P);
+		}
+						
+		if (*kolom != 0)
+		{
+			*kolom = *kolom - 1;
+		}else{
+			P = Current(*L);
+			if (Info(P) != NULL)
+			{
+				P = Prev(P);
+			}
+			
+			while (Info(P) != NULL)
+			{
+				count = count + 1;
+				P = Prev(P);
+			}
+			*baris = *baris - 1;
+			if (count == 0)
+			{
+				*kolom = count;
+			}else{
+				*kolom = count + 1;
+			}
+		}
+	}
+	
+	// Print Layar	
+//	if (*kolom != 0)
+//	{
+//		gotoxy(*baris,*kolom-1);
+//		P = Current(*L);
+//		count = 0;
+//		while(P != NULL)
+//		{
+//			printf("%c", Info(P));
+//			if (Info(P) == NULL)
+//			{
+//				printf("\n");
+//			}
+//			P = Next(P);
+//			count++;
+//		}	
+//		
+//		for(int i=0; i<= count; i++)
+//		{
+//			printf(" ");
+//		}
+//		
+//	}else{
+		P = Next(Head(*L));
+		system("cls");
+		while(P != NULL)
+		{
+			printf("%c", Info(P));
+			if (Info(P) == NULL)
+			{
+				printf("\n");
+			}
+			P = Next(P);
+		}
+//	}
+	
+	gotoxy(28,2);
+	printf("SAVE (Ctrl + S) | QUIT/CANCLE (Ctrl + Q)							Baris: %d | Kolom: %d", (*baris)+1, (*kolom)+1); 
+	bar();	
+	gotoxy(*baris,*kolom);
 }

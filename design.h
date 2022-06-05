@@ -2,9 +2,6 @@
 #define design_H
 #include "input.h"
 
-#include <iostream>
-#include <fstream>
-
 void gotoxy(int baris,int kolom);
 void loading();
 void border();
@@ -14,7 +11,7 @@ void menu();
 void displayLogo();
 void color(int color);
 bool selectionMenu(list *L);
-void tampil_list(list L);
+void tampil_list(list *L);
 void bar();
 
 #endif

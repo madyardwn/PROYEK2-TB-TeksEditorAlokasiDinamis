@@ -3,9 +3,6 @@
 
 #include <stdbool.h>
 
-#include <iostream>
-#include <fstream>
-
 #define Prev(P) P->prev
 #define Info(P) P->info
 #define First(P) P->first
@@ -43,8 +40,6 @@ void handling_input(list *L, char ch, int *baris, int *kolom);
 void arrows(list *L, char ch, int *baris, int *kolom);
 void enter(list *L, char ch, int *baris, int *kolom);
 void dealokasi(list *L);
-
-//evic
-void del(list *L, char ch, int *baris, int *kolom);
+void backspace(list *L, char ch, int *baris, int *kolom);
 
 #endif
