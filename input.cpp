@@ -24,15 +24,18 @@ address Alokasi(char ch)
 
 void dealokasi(list *L)
 {
+	/* --- Kamus Data --- */
 	address P, temp;
 	
+	/* --- Algortima ---*/
 	P = Next(Head(*L));
 	while(P != NULL){
 		temp = P;
 		P = Next(P);
-		free(temp);
+		free(temp); // dealokasi
 	}
-	free(Head(*L));
+	
+	free(Head(*L)); // dealokasi root
 }
 
 void create_text_editor(list *L)
@@ -53,8 +56,8 @@ void input_keyboard(list *L, int *baris, int *kolom)
 	address P; // variable penampung address suatu node
 	
 	/* --- Algoritma --- */
-	barInput(&(*baris), &(*kolom), true);
-	gotoxy(*baris,*kolom);
+	barInput(&(*baris), &(*kolom), true); // modul untuk memanggil status bar 
+	gotoxy(*baris,*kolom); // modul untuk memindahkan kursor
 	
 	while (1)
 	{
@@ -73,23 +76,34 @@ void input_keyboard(list *L, int *baris, int *kolom)
 			break;
 		}
 		
+		/* turn off tab */
+		if(ch == 9)
+		{
+			continue;
+		}
+		
 		/* Cek Validasi Input */
 		validasi_input = cek_input(ch);
 		
 		/* Jika tidak perlu di handling, maka input normal */ 
 		if (validasi_input != true)
 		{
-			P = Alokasi(ch);
-			if (P != NULL)
+			if(*kolom == 119)
 			{
-				normal_input(*(&L), P, &(*baris), &(*kolom));
-				barInput(&(*baris), &(*kolom), false);
-				gotoxy(*baris,*kolom);
-			}
-			
-			else
-			{
-				Beep(1000,50);
+				continue;
+			}else{
+				P = Alokasi(ch);
+				if (P != NULL)
+				{
+					normal_input(*(&L), P, &(*baris), &(*kolom));
+					barInput(&(*baris), &(*kolom), false);
+					gotoxy(*baris,*kolom);
+				}
+				
+				else
+				{
+					Beep(1000,50);
+				}
 			}
 		}
 		
@@ -130,23 +144,34 @@ void input_keyboardModify(list *L, int *baris, int *kolom, char namaFile[30])
 			break;
 		}
 		
+		/* turn off tab */
+		if(ch == 9)
+		{
+			continue;
+		}
+		
 		/* Cek Validasi Input */
 		validasi_input = cek_input(ch);
 		
 		/* Jika tidak perlu di handling, maka input normal */ 
 		if (validasi_input != true)
 		{
-			P = Alokasi(ch);
-			if (P != NULL)
+			if(*kolom == 119)
 			{
-				normal_input(*(&L), P, &(*baris), &(*kolom));
-				barInput(&(*baris), &(*kolom), false);
-				gotoxy(*baris,*kolom);
-			}
-			
-			else
-			{
-				Beep(1000,50);
+				continue;
+			}else{
+				P = Alokasi(ch);
+				if (P != NULL)
+				{
+					normal_input(*(&L), P, &(*baris), &(*kolom));
+					barInput(&(*baris), &(*kolom), false);
+					gotoxy(*baris,*kolom);
+				}
+				
+				else
+				{
+					Beep(1000,50);
+				}
 			}
 		}
 		
@@ -186,13 +211,6 @@ bool cek_input(char ch)
 		
 		// Arrow
 		case -32:
-		{
-			return true;
-			break;
-		}
-		
-		// Tab
-		case 9:
 		{
 			return true;
 			break;
@@ -270,7 +288,11 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	// Enter
 	if (ch == 13)
 	{
-		enter(*(&L), NULL, *(&baris), *(&kolom));
+		if(*baris != 26)
+		{
+			enter(*(&L), NULL, *(&baris), *(&kolom));
+		}
+		
 	}else
 	
 	// Arrows
@@ -492,9 +514,10 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 						printf("\n");
 					}
 					P = Next(P);
-				}	
+				}
 			}
-			gotoxy(*baris,*kolom);		
+			barInput(&(*baris), &(*kolom), true);
+			gotoxy(*baris,*kolom);
 			break;
 		}
 		

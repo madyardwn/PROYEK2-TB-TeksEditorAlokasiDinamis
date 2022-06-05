@@ -8,19 +8,28 @@
 
 bool txt_extension(char const *name)
 {
-    size_t len = strlen(name);
+	/* --- Modul untuk mengambil ekstensi file  --- */
+    
+	size_t len = strlen(name); // panjang array
+    
+    /* Cek apakah ekstensinya .txt */
     return len > 4 && strcmp(name + len - 4, ".txt") == 0;
 }
 
 bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia, char namaFile[30])
 {
-	FILE *file;
-	address P;
-	char ch;
-	bool cek;
+	/* Kamus Data */
+	FILE *file; // variable file  
+	address P; // variable untuk menampung address
+	char ch; // variable untuk menampung karakter input
+	bool cek; // validasi
 	
-	file = fopen(namaFile, "r");
 	
+	/* --- Algortima --- */
+	
+	file = fopen(namaFile, "r"); // membuka file dengan mode read	
+	
+	/* Jika File kosong */
 	if(file == NULL)
 	{
 		gotoxy(28,14);
@@ -30,59 +39,67 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia, char namaFil
 		cek = false;
 	}
 	
+	/* Jika File ada */
 	else 
 	{
-		gotoxy(0,0);
-		system("cls");
-		while(!feof(file))
+		gotoxy(0,0); // Kembali ke 0,0
+		system("cls"); // clear screen 
+		
+		while(!feof(file)) // baca file sampai end of file
 		{
-			ch = fgetc(file);
-			if (ch == -1)
+			ch = fgetc(file); // ambil karakter dalam file masukkan dalam variable ch
+			
+			/* Error handling karena node awal berisi NULL*/
+			if (ch == -1) 
 			{
 				continue;
 			}
 			
+			/* Print Enter ketika membaca '\n' dalam file */
 			if(ch == '\n')
 			{
 				enter(*(&L), NULL, *(&baris), *(&kolom));
 			}
 			
+			/* Alokasikan apa yang dibaca kedalam memori heap */
 			else
 			{
-				P = Alokasi(ch);
-				normal_input(*(&L), P, &(*baris), &(*kolom));
+				P = Alokasi(ch); // alokasi pembacaan ch
+				normal_input(*(&L), P, &(*baris), &(*kolom)); // representasi console
 			}
 		}
-		cek = true;
-		fclose(file);
+		cek = true; 
+		fclose(file); // menuntup file
 	}
 	
-	return cek;
+	return cek; // mereturn nilai yang disimpan dalam cek
 }
 
 void ListFile(list *L)
 {
-	system("cls");
-	int jumlah = 1;
-	char cwd[PATH_MAX];
-	char pilihFile[30];
-    struct dirent *d;
-    DIR *dr;
+	/* --- Kamus Data --- */
+	int jumlah = 1; // variable untuk menghitung jumlah file .txt
+	char cwd[PATH_MAX]; // variable untuk menampung nama file
+    struct dirent *d; // variable record untuk menampung data directory
+    DIR *dr; // variable record yang merepresentasikan directory stream, stream : penghubung 
     
-    getcwd(cwd, sizeof(cwd));
-    dr = opendir(cwd);
+    system("cls"); // clear screen
+    getcwd(cwd, sizeof(cwd)); // prosedur untuk mengambil data direcoty saat ini
+    dr = opendir(cwd); // membuka directory 
     if(dr!=NULL)
     {
     	printf("Daftar File : \n");
+    	/* Membaca isi directory satu persatu dengan fungsi readdir */
         for(d=readdir(dr); d!=NULL; d=readdir(dr))
         {
+        	/* Jika Ekstensi nya .txt */
         	if(txt_extension(d->d_name))
 			{
         		printf("%d. %s \n", jumlah, d->d_name);
         		jumlah++;
 			}
         }
-        closedir(dr);
+        closedir(dr); // Menutup direcotory
     }
     else
 	{
@@ -169,26 +186,33 @@ void inputNamaFile(char karakter[30])
 
 bool cekNama(char namaFile[30])
 {
-	char cwd[PATH_MAX];
-    struct dirent *d;
-    DIR *dr;
+	/*  --- Kamus Data --- */
+	char cwd[PATH_MAX]; // Current Work Directory, PATH_MAX : 260
+    struct dirent *d; // variable record untuk operasi directory
+    DIR *dr; // variable record yang merepresentasikan directory stream, stream : penghubung 
     
-    getcwd(cwd, sizeof(cwd));
-    dr = opendir(cwd);
-    if(dr!=NULL)
+    /* ---  Algoritma --- */
+    getcwd(cwd, sizeof(cwd));  // prosedur untuk mengambil current work directory 
+    dr = opendir(cwd); // opendir : fungsi untuk membuka direcory, dr menampung addresnya
+    
+	/* Jika Directory Tidak ada */
+	if(dr!=NULL) 
     {
+    	/* Membaca isi directory  satu persatu dengan readdir */
         for(d=readdir(dr); d!=NULL; d=readdir(dr))
         {
+        	/* Mengambil file yang hanya berekstensi .txt */
         	if(txt_extension(d->d_name))
 			{
+				
+				/* Membandinkan dengan nama yang diketik, jika sama return false */
 				if(!strcmp(namaFile,d->d_name))
 				{
-					
 					return false;
 				}
 			}
         }
-        closedir(dr);
+        closedir(dr); // tutup directory
     }
     else
     {
@@ -199,49 +223,53 @@ bool cekNama(char namaFile[30])
 
 void save(list *L)
 {
-	char namaFile[30], ch;
-	address P;
-	FILE *file;
-	bool available = true;
+	/* --- Kamus Data --- */
+	char namaFile[30], ch; // variable untuk menampung nama file
+	address P; // variable untuk menampung address
+	FILE *file; // variable file
+	bool available = true; // validator
 	
+	/* --- Algoritma ---*/
 	while(1)
 	{		
-		system("cls");
+		system("cls"); // clear screen 
 		
-		tampil_list(&(*L));
+		tampil_list(&(*L)); // Memanggil modul tampilkan list
 		
 		gotoxy(28,2);
 		printf("Nama file : ");
 		barMenu();
 		
 		gotoxy(28,14);
-		inputNamaFile(namaFile);
-		strcat(namaFile,".txt");
+		inputNamaFile(namaFile); // prosedur untuk input nama
+		strcat(namaFile,".txt"); // menyambungkan string
 		
-		available = cekNama(namaFile);
+		available = cekNama(namaFile); // modul untuk melakukan pengecekan terhadap nama file
 		
+		/* Jika nama file boleh dipakai */
 		if(available)
 		{
-			file = fopen(namaFile, "w");
+			file = fopen(namaFile, "w"); // open file mode overwrite
 			
 			P = Next(Head(*L));
 			while(P != NULL)
 			{	
 				if(Info(P) == NULL)
 				{
-					fprintf(file, "%c", '\n');
+					fprintf(file, "%c", '\n'); // tulis list ke file
 				}
 				
 				else
 				{
-					fprintf(file, "%c", Info(P));
+					fprintf(file, "%c", Info(P)); // tulis list ke file
 				}
 				P = Next(P);
 			}
-			fclose(file);
+			fclose(file); // tutup file
 			break;
 		}
 		
+		/* Jika Nama File tidak boleh Dipakai */
 		else
 		{
 			system("cls");
@@ -261,32 +289,34 @@ void save(list *L)
 
 void saveModify(list *L, char namaFile[30])
 {
-	address P;
-	FILE *file;
+	/* --- Kamus Data --- */
+	address P; // variable untuk menampung address
+	FILE *file; // variable file
 	
+	/* --- Algoritma -- */
 	while(1)
 	{		
-		tampil_list(&(*L));
+		tampil_list(&(*L)); // menampilkan list
 		
-		file = fopen(namaFile, "w");
+		file = fopen(namaFile, "w"); // membuka file dengan mode overwrite
 		
 		P = Next(Head(*L));
 		while(P != NULL)
 		{	
 			if(Info(P) == NULL)
 			{
-				fprintf(file, "%c", '\n');
+				fprintf(file, "%c", '\n'); // menulis ke file 
 			}
 			
 			else
 			{
-				fprintf(file, "%c", Info(P));
+				fprintf(file, "%c", Info(P)); // menulis ke file
 			}
 			P = Next(P);
 		}
 		fclose(file);
 		
-		barMenu();
+		barMenu(); // menampilkan bar menu kembali
 		gotoxy(28,2);
 		printf("File berhasil disimpan");
 		getch();
@@ -297,21 +327,26 @@ void saveModify(list *L, char namaFile[30])
 
 void modify(list *L)
 {
-	bool fileTersedia = false;
-	int baris = 0;
-	int kolom = 0;
-	char namaFile[30];
+	/* --- Kamus Data --- */
+	bool fileTersedia = false; // variable untuk memvalidasi keberadaan fille
+	int baris = 0; // baris mula-mula
+	int kolom = 0; // kolom mula-mula
+	char namaFile[30]; // variable untuk menampung nama file 
 	
 	gotoxy(28,2);
 	printf("Nama file : ");
-	barMenu();
+	barMenu(); // menampulkan bar khusus untuk proses input namaFile
 	
 	gotoxy(28,14);
-	inputNamaFile(namaFile);
-	strcat(namaFile,".txt");
+	inputNamaFile(namaFile); // modul untuk memasukkan nama file
+	strcat(namaFile,".txt"); // fungsi untuk menyambungkan nama yang sudah di input dengan .txt
 	
-	fileTersedia = fileToList(&(*L), &baris, &kolom, fileTersedia, namaFile);
-	if(fileTersedia){
+	fileTersedia = fileToList(&(*L), &baris, &kolom, fileTersedia, namaFile); // return value bool/false
+	
+	/* Jika File tersedia */
+	if(fileTersedia)
+	{
+		/* Modul Input keyboard khsus modify */
 		input_keyboardModify(&(*L), &baris, &kolom, namaFile);
 	}
 }

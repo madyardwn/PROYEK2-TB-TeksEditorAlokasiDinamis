@@ -18,26 +18,34 @@
 
 void warna(int color)
 {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+	/* Prosedur WINAPI untuk mengganti warna console */
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color); // meerubah backgound dan foreground
+	/*
+		- GetStdHandle 				: fungsi untuk membaca STD_OUTPUT_HANDLE
+		- STD_OUTPUT_HANDLE 		: standard ouput device, menginisialiasasi buffer konsole yang aktif 
+	*/
 }
 
 void box(int x1,int y1,int x2,int y2) 	// x kolom, y baris
-{										
-   int i;
-   for(i=x1;i<=x2;i++)
-    {
+{						
+	/* --- Kamus Data --- */
+	int i;
+	
+	/* --- Algoritma --- */				
+	for(i=x1;i<=x2;i++)
+	{
 		gotoxy(y1,i);
 		printf("%c",196);
 		gotoxy(y2,i);
 		printf("%c",196);
-    }
-   	for(i=y1;i<=y2;i++)
-    {
+	}
+	for(i=y1;i<=y2;i++)
+	{
 		gotoxy(i,x1);
 		printf("%c",179);
 		gotoxy(i,x2);
 		printf("%c",179);
-    }
+	}
 	gotoxy(y1,x1);
 	printf("%c",218);
 	gotoxy(y2,x1);
@@ -67,7 +75,7 @@ void creadit()
 
 void displayLogo()
 {
-	warna(9);
+	warna(9); // modul mengubah warna
 	printf("                                                                                           \n");
 	printf("                                                                                           \n");
 	printf("   ||||       |||   |||      |||  |||     |||  |||||||||                |||   ||||||||||   \n"); 
@@ -94,6 +102,7 @@ void displayLogo()
 
 void barInput(int *baris, int *kolom, int reset)
 {
+	/* reset : untuk mengurangi efek kedip oleh clearscreen */
 	if(reset)
 	{
 		box(1,27,118,29);
@@ -104,8 +113,10 @@ void barInput(int *baris, int *kolom, int reset)
 
 void barMenu()
 {
+	/* Menampilkan Kotak */
 	box(1,27,118,29);
 }
+
 bool selectionMenu(list *L)
 {
 	/* --- Kamus Data --- */
