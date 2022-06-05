@@ -10,4 +10,6 @@ bool txt_extension(char const *name);
 void inputNamaFile(char karakter[25]);
 bool cekNama(char namaFile[25]);
 void duplicate();
+int hitungKata();
+int finrep();
 #endif

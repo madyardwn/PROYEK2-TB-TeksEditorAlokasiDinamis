@@ -172,7 +172,11 @@ bool selectionMenu(list *L)
 				
 				warna(7);
 				ListFile(&(*L));
-				duplicate();
+//				duplicate();
+
+//				hitungKata();
+
+				finrep();
 				
 				return true;
 			}
