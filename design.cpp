@@ -11,7 +11,7 @@
 #define WHITE 7
 #define LIGHTM 13
 #define FIRST_MENU 1
-#define LAST_MENU 5
+#define LAST_MENU 4
 #define UP 72
 #define DOWN 80
 #define ENTER 13
@@ -120,7 +120,7 @@ void barMenu()
 bool selectionMenu(list *L)
 {
 	/* --- Kamus Data --- */
-	int opsiWarna[5] = {WHITE, WHITE, WHITE, WHITE, WHITE}; // Array warna mula-mula
+	int opsiWarna[4] = {WHITE, WHITE, WHITE, WHITE}; // Array warna mula-mula
 	int pilihan = 1; // penanda posisi
 	char ch; // penampung input
 	
@@ -147,10 +147,6 @@ bool selectionMenu(list *L)
 		
 		gotoxy(21,5);
 		warna(opsiWarna[3]);
-		printf("	[T] Theme Text Editor");
-		
-		gotoxy(22,5);
-		warna(opsiWarna[4]);
 		printf("	[Q] Quit Text Editor");
 		
 		
@@ -230,19 +226,8 @@ bool selectionMenu(list *L)
 				return true; // Return True : untuk menampilkan menu kembali
 			}
 			
-			/* Mengganti Menu */
-			if(pilihan == 4)
-			{
-				system("cls"); // Clear Screen 
-
-				warna(WHITE); // Mengembalikan warna menjadi normal 
-				menu_themes(); // Masuk ke menu theme
-				
-				return true; // Return True : untuk menampilkan menu kembali
-			}
-			
 			/* Exit */
-			if(pilihan == 5)
+			if(pilihan == 4)
 			{
 				system("cls"); // Clear Screen
 				
@@ -293,16 +278,6 @@ bool selectionMenu(list *L)
 			return true; // Return True untuk menampilkan menu kembali
 		}else 
 		
-		/* Tombol T : Theme */
-		if(ch == 't' || ch == 'T')
-		{
-			system("cls"); // Clear Screen
-			warna(WHITE); // Mengembalikan warna menjadi normal 
-			menu_themes(); // Masuk ke menu theme
-			
-			return true; // Return True untuk menampilkan menu kembali
-		}else
-		
 		/* Tombol Q : Quit */
 		if(ch == 'q' || ch == 'Q')
 		{
@@ -320,7 +295,6 @@ bool selectionMenu(list *L)
 			opsiWarna[1] = WHITE; // Mengembalikan warna menjadi normal 
 			opsiWarna[2] = WHITE; // Mengembalikan warna menjadi normal 
 			opsiWarna[3] = WHITE; // Mengembalikan warna menjadi normal 
-			opsiWarna[4] = WHITE; // Mengembalikan warna menjadi normal 
 			
 			/* -- Merubah Warna Sesuai Pilihan --*/
 			if(pilihan == 1)
@@ -341,11 +315,6 @@ bool selectionMenu(list *L)
 			if(pilihan == 4)
 			{
 				opsiWarna[3] = LIGHTM;
-			}
-			
-			if(pilihan == 5)
-			{
-				opsiWarna[4] = LIGHTM;
 			}
 		}
 	}

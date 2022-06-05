@@ -209,7 +209,7 @@ bool cek_input(char ch)
 			break;
 		}
 		
-		// Arrow
+		// Arrow & Del
 		case -32:
 		{
 			return true;
@@ -295,7 +295,7 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 		
 	}else
 	
-	// Arrows
+	// Arrows & Del
 	if (ch == -32)
 	{
 		arrows(*(&L), ch, *(&baris), *(&kolom));
@@ -318,6 +318,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 {
 	address P,Q;
 	int count = 0;
+	int last_line = -1;
 	ch = getch();
 	
 	switch(ch)
@@ -326,116 +327,134 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 		case 72:
 		{
 			P = Current(*L);
-			if (P == Head(*L))
+			if (P != Head(*L) and *baris != 0)
 			{
-				gotoxy(*baris,*kolom);
-				break;
-			}
-			
-			// Hitung Posisi dari NULL
-			*kolom = 0;
-			while(Info(P) != NULL)
-			{
-				P = Prev(P);
-				count = count + 1;
-			}
-			P = Prev(P);
-			
-			if (P == NULL)
-			{
-				*kolom = count;
-				Current(*L) = P;
-				gotoxy(*baris,*kolom);
-				break;
-			}
-			
-			if (Info(P) == NULL)
-			{
-				Current(*L) = P;
-			}
-			
-			else
-			{
-				while(Info(P) != NULL)
+				// Jika Pada Kolom Awal / Baris Kosong
+				if (Info(P) == NULL)
 				{
 					P = Prev(P);
-				}
-				
-				// Ubah Posisi
-				for (int i=0; i < count; i++)
-				{
-					P = Next(P);
-					*kolom = *kolom + 1;
+					while (Info(P) != NULL)
+					{
+						P = Prev(P);
+					}
+					*baris = *baris - 1;
+					*kolom = 0;
+					Current(*L) = P;
+					gotoxy(*baris,*kolom);
+					
+				// Jika Bukan Pada Kolom Awal / Baris Berisi Suatu Karakter
+				}else{
+					while (Info(P) != NULL)
+					{
+						P = Prev(P);
+						count = count + 1;
+					}
+					P = Prev(P);
+					
 					if (Info(P) == NULL)
 					{
-						Current(*L) = Prev(Current(*L));
-						*kolom = *kolom - 1;
-						break;
-					}	
+						*baris = *baris - 1;
+						*kolom = 0;
+						Current(*L) = P;
+						gotoxy(*baris,*kolom);
+					}else{
+						while (Info(P) != NULL)
+						{
+							P = Prev(P);
+						}
+						P = Next(P);
+						*kolom = 1;
+						
+						for (int i=1; i < count; i++)
+						{
+							if (Info(P) != NULL)
+							{
+								P = Next(P);
+								*kolom = *kolom + 1;
+							}else{
+								P = Prev(P);
+								*kolom = *kolom - 1;
+								break;
+							}
+						}
+						*baris = *baris - 1;
+						Current(*L) = P;
+						gotoxy(*baris,*kolom);	
+					}
 				}
-				Current(*L) = P;
 			}
-			*baris = *baris - 1;
-			gotoxy(*baris,*kolom);
 			break;
 		}
 		
 		// Down Arrow
 		case 80:
 		{
+			// Hitung Baris Terakhir
+			P = Head(*L);
+			while (P != NULL)
+			{
+				if (Info(P) == NULL)
+				{
+					last_line = last_line + 1;
+				}
+				P = Next(P);
+			}		
+			
+			// Algoritma Down Arrow
 			P = Current(*L);
-			if (P == Tail(*L))
+			if (P != Tail(*L) and *baris != last_line)
 			{
-				gotoxy(*baris,*kolom);
-				break;
-			}
-			
-			// Hitung Posisi dari NULL
-			*kolom = 0;
-			while(Info(P) != NULL)
-			{
-				P = Prev(P);
-				count = count + 1;
-			}
-			P = Next(P);
-			
-			if (Info(P) == NULL)
-			{
-				Current(*L) = P;
-			}
-			
-			else
-			{
-				while(Info(P) != NULL)
+				// Jika Pada Kolom Awal / Baris Kosong
+				if (Info(P) == NULL)
 				{
 					P = Next(P);
-				}
-				
-				// Ubah Posisi
-				for (int i=0; i < count; i++)
-				{
-					if (Next(P) != NULL)
+					while (Info(P) != NULL)
 					{
 						P = Next(P);
-						Current(*L) = P;
-						*kolom = *kolom + 1;
-						if (Info(P) == NULL)
+					}
+					*baris = *baris + 1;
+					*kolom = 0;
+					Current(*L) = P;
+					gotoxy(*baris,*kolom);
+					
+				// Jika Bukan Pada Kolom Awal / Baris Berisi Suatu Karakter
+				}else{
+					while (Info(P) != NULL)
+					{
+						P = Prev(P);
+						count = count + 1;
+					}
+					P = Next(P);
+					
+					while (Info(P) != NULL)
+					{
+						P = Next(P);
+					}
+					P = Next(P);
+					*kolom = 1;
+					
+					for (int i=1; i < count; i++)
+					{
+						if (Next(P) == NULL)
 						{
-							Current(*L) = Prev(Current(*L));
+							break;
+						}else
+						
+						if (Info(P) != NULL)
+						{
+							P = Next(P);
+							*kolom = *kolom + 1;
+						}else{
+							P = Prev(P);
 							*kolom = *kolom - 1;
 							break;
-						}	
+						}
 					}
-					
-					else
-					{
-						Current(*L) = P;
-						break;
-					}
+					*baris = *baris + 1;
+					Current(*L) = P;
+					gotoxy(*baris,*kolom);	
 				}
 			}
-			*baris = *baris + 1;
-			gotoxy(*baris,*kolom);
 			break;
 		}
 		
