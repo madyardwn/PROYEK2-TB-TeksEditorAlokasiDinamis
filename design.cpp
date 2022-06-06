@@ -11,7 +11,7 @@
 #define WHITE 7
 #define LIGHTM 13
 #define FIRST_MENU 1
-#define LAST_MENU 4
+#define LAST_MENU 6
 #define UP 72
 #define DOWN 80
 #define ENTER 13
@@ -120,7 +120,7 @@ void barMenu()
 bool selectionMenu(list *L)
 {
 	/* --- Kamus Data --- */
-	int opsiWarna[4] = {WHITE, WHITE, WHITE, WHITE}; // Array warna mula-mula
+	int opsiWarna[6] = {WHITE, WHITE, WHITE, WHITE, WHITE, WHITE}; // Array warna mula-mula
 	int pilihan = 1; // penanda posisi
 	char ch; // penampung input
 	
@@ -143,10 +143,18 @@ bool selectionMenu(list *L)
 		
 		gotoxy(20,5);
 		warna(opsiWarna[2]);
-		printf("	[D] Duplicate File");
+		printf("	[C] Duplicate File");
 		
 		gotoxy(21,5);
 		warna(opsiWarna[3]);
+		printf("	[D] Delete File");
+		
+		gotoxy(22,5);
+		warna(opsiWarna[4]);
+		printf("	[R] Rename File");
+		
+		gotoxy(23,5);
+		warna(opsiWarna[5]);
 		printf("	[Q] Quit Text Editor");
 		
 		
@@ -226,8 +234,32 @@ bool selectionMenu(list *L)
 				return true; // Return True : untuk menampilkan menu kembali
 			}
 			
-			/* Exit */
+			/* Menghapus file yang sudah tersimpan */
 			if(pilihan == 4)
+			{
+				system("cls"); // Clear Screen 
+				
+				warna(WHITE); // Mengembalikan warna menjadi normal 
+				ListFile(&(*L)); // Menampilkan daftar file 
+				deleteFile(); // Memilih kemudian menghapus file
+				
+				return true; // Return True : untuk menampilkan menu kembali
+			}
+			
+			/* Mengganti nama file */
+			if(pilihan == 5)
+			{
+				system("cls"); // Clear Screen 
+				
+				warna(WHITE); // Mengembalikan warna menjadi normal 
+				ListFile(&(*L)); // Menampilkan daftar file 
+				renameFile(); // Memilih kemudian mengganti nama file
+				
+				return true; // Return True : untuk menampilkan menu kembali
+			}
+			
+			/* Exit */
+			if(pilihan == 6)
 			{
 				system("cls"); // Clear Screen
 				
@@ -266,14 +298,38 @@ bool selectionMenu(list *L)
 			return true; // Return True untuk menampilkan menu kembali
 		}else
 		
-		/* Tombol D : Duplikasi */
-		if(ch == 'd' || ch == 'D')
+		/* Tombol C : Duplikasi */
+		if(ch == 'c' || ch == 'C')
 		{
 			system("cls"); // Clear Screen
 			
 			warna(WHITE); // Mengembalikan warna menjadi normal 
 			ListFile(&(*L)); // Menampilkan daftar file
 			duplicate(); // Memilih kemudian menduplikasi file
+			
+			return true; // Return True untuk menampilkan menu kembali
+		}else 
+		
+		/* Tombol  D: Delete File */
+		if(ch == 'd' || ch == 'D')
+		{
+			system("cls"); // Clear Screen
+			
+			warna(WHITE); // Mengembalikan warna menjadi normal 
+			ListFile(&(*L)); // Menampilkan daftar file
+			deleteFile(); // Memilih kemudian menghapus file
+			
+			return true; // Return True untuk menampilkan menu kembali
+		}else 
+		
+		/* Tombol R : Rename */
+		if(ch == 'r' || ch == 'R')
+		{
+			system("cls"); // Clear Screen
+			
+			warna(WHITE); // Mengembalikan warna menjadi normal 
+			ListFile(&(*L)); // Menampilkan daftar file
+			renameFile(); // Memilih kemudian mengganti nama file
 			
 			return true; // Return True untuk menampilkan menu kembali
 		}else 
@@ -295,6 +351,8 @@ bool selectionMenu(list *L)
 			opsiWarna[1] = WHITE; // Mengembalikan warna menjadi normal 
 			opsiWarna[2] = WHITE; // Mengembalikan warna menjadi normal 
 			opsiWarna[3] = WHITE; // Mengembalikan warna menjadi normal 
+			opsiWarna[4] = WHITE; // Mengembalikan warna menjadi normal 
+			opsiWarna[5] = WHITE; // Mengembalikan warna menjadi normal 
 			
 			/* -- Merubah Warna Sesuai Pilihan --*/
 			if(pilihan == 1)
@@ -315,6 +373,16 @@ bool selectionMenu(list *L)
 			if(pilihan == 4)
 			{
 				opsiWarna[3] = LIGHTM;
+			}
+			
+			if(pilihan == 5)
+			{
+				opsiWarna[4] = LIGHTM;
+			}
+			
+			if(pilihan == 6)
+			{
+				opsiWarna[5] = LIGHTM;
 			}
 		}
 	}

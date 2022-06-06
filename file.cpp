@@ -414,3 +414,57 @@ void duplicate()  /* -- referensi : https://www.youtube.com/watch?v=ceODxfZWZIo 
 	}
 	getch();
 }
+
+/*modul delete file*/
+int removeFile(char nama_file_temp[30]) {
+    system("cls");
+    if (remove(nama_file_temp) == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void deleteFile(){
+	char namaFile[30];
+    bool statusFile;
+    /* Input nama file lama yang akan dihapus */
+    printf("Masukkan nama file yang akan dihapus: ");
+    scanf("%s", namaFile);
+    strcat(namaFile,".txt");
+    
+    /* Proses menghapus file*/
+    statusFile = removeFile(namaFile);
+    if (statusFile == true){
+        printf("SUCCESS : %s berhasil dihapus\n", namaFile);
+    } else  {
+        printf("ERROR : %s gagal dihapus\n", namaFile);
+    }
+    
+}
+
+/*modul rename file*/
+void renameFile(){
+    char oldName[25], newName[25];
+
+    /* Input nama file lama dan nama file baru */
+    printf("Masukan nama file yang akan diubah : ");
+    scanf("%s", oldName);
+    strcat(oldName,".txt");
+    
+    printf("masukan nama file baru : ");
+    scanf("%s", newName);
+    strcat(newName,".txt");
+
+
+    /* mengganti nama file lama menjadi nama file baru */
+    if (rename(oldName, newName) == 0)
+    {
+        printf("File berhasil diganti namanya.\n");
+    }
+    else
+    {
+        printf("Nama file tidak dapat dirunah. Silakan periksa file yang anda miliki.\n");
+    }
+
+}
