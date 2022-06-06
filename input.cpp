@@ -595,6 +595,17 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 					free(Q);
 				}
 				
+				// Hitung Baris Terakhir
+				P = Head(*L);
+				while (P != NULL)
+				{
+					if (Info(P) == NULL)
+					{
+						last_line = last_line + 1;
+					}
+					P = Next(P);
+				}
+				
 				// Bersihkan Layar
 				for(int i=0; i <= last_line+10; i++)
 				{
@@ -721,13 +732,19 @@ void backspace(list *L, char ch, int *baris, int *kolom)
 				P = Prev(P);
 			}
 			*baris = *baris - 1;
-			if (count == 0)
-			{
-				*kolom = count;
-			}else{
-				*kolom = count + 1;
-			}
+			*kolom = count + 1;
 		}
+	}
+	
+	// Hitung Baris Terakhir
+	P = Head(*L);
+	while (P != NULL)
+	{
+		if (Info(P) == NULL)
+		{
+			last_line = last_line + 1;
+		}
+		P = Next(P);
 	}
 	
 	//Bersihkan Layar
