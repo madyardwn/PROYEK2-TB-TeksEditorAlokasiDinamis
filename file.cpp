@@ -23,7 +23,8 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia, char namaFil
 	address P; // variable untuk menampung address
 	char ch; // variable untuk menampung karakter input
 	bool cek; // validasi
-	
+	int max_height = 30;
+	int max_width = 120;
 	
 	/* --- Algortima --- */
 	
@@ -42,8 +43,8 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia, char namaFil
 	/* Jika File ada */
 	else 
 	{
-		gotoxy(0,0); // Kembali ke 0,0
 		system("cls"); // clear screen 
+		gotoxy(8,0); // Kembali ke 8,0
 		
 		while(!feof(file)) // baca file sampai end of file
 		{
@@ -67,6 +68,7 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia, char namaFil
 				P = Alokasi(ch); // alokasi pembacaan ch
 				normal_input(*(&L), P, &(*baris), &(*kolom)); // representasi console
 			}
+			SetWindow(&max_height+5, &max_width+5, *baris, *kolom, *L);
 		}
 		cek = true; 
 		fclose(file); // menuntup file
@@ -332,6 +334,7 @@ void modify(list *L)
 	int baris = 0; // baris mula-mula
 	int kolom = 0; // kolom mula-mula
 	char namaFile[30]; // variable untuk menampung nama file 
+	bool validasi_file = true;
 	
 	gotoxy(28,2);
 	printf("Nama file : ");
@@ -347,7 +350,7 @@ void modify(list *L)
 	if(fileTersedia)
 	{
 		/* Modul Input keyboard khsus modify */
-		input_keyboardModify(&(*L), &baris, &kolom, namaFile);
+		input_keyboard(&(*L), &baris, &kolom, namaFile, validasi_file);
 	}
 }
 

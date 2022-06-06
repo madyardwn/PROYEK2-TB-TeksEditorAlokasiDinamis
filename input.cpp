@@ -48,84 +48,70 @@ void create_text_editor(list *L)
 	Tail(*L) = P;
 }
 
-void input_keyboard(list *L, int *baris, int *kolom)
-{
+void input_keyboard(list *L, int *baris, int *kolom, char namaFile[], bool validasi_file)
+{	
 	/* --- Kamus Data --- */ 
 	char ch; // variable penampung input
 	bool validasi_input; // variable untuk menerima hasil pengecekan tipe input
+	bool pull_mode=false; // Untuk mengecek pull mode
+	bool status_bar=true;
 	address P; // variable penampung address suatu node
+	int max_width, max_height;
+	int warna_teks[5] = {7,7,7,7,7};
+	max_width = 120;
+	max_height = 30;
 	
 	/* --- Algoritma --- */
-	barInput(&(*baris), &(*kolom), true); // modul untuk memanggil status bar 
-	gotoxy(*baris,*kolom); // modul untuk memindahkan kursor
-	
-	while (1)
+	// Membuat Tampilan Header (Pull Down & Status Bar)
+	box(3,1,116,3);
+	for(int i=23; i <= 116; i = i+24)
 	{
-		ch = getch();
-		
-		/* ctrl + q : untuk (membatalkan pengetikan) kembali ke menu */
-		if (ch == 17)
-		{
-			break;
-		}else
-		
-		/* ctrl + s : untuk Save */
-		if(ch == 19)
-		{
-			save(&(*L));
-			break;
-		}
-		
-		/* turn off tab */
-		if(ch == 9)
-		{
-			continue;
-		}
-		
-		/* Cek Validasi Input */
-		validasi_input = cek_input(ch);
-		
-		/* Jika tidak perlu di handling, maka input normal */ 
-		if (validasi_input != true)
-		{
-			if(*kolom == 119)
-			{
-				continue;
-			}else{
-				P = Alokasi(ch);
-				if (P != NULL)
-				{
-					normal_input(*(&L), P, &(*baris), &(*kolom));
-					barInput(&(*baris), &(*kolom), false);
-					gotoxy(*baris,*kolom);
-				}
-				
-				else
-				{
-					Beep(1000,50);
-				}
-			}
-		}
-		
-		/* Jika perlu di handling, maka input di handle terlebih dahulu */
-		else
-		{
-			handling_input(*(&L), ch, &(*baris), &(*kolom));
-		}
+		gotoxy(2,i);		// Tengah
+		printf("%c", 179);
+		gotoxy(1,i);		// Atas
+		printf("%c", 194);
+		gotoxy(3,i);		// Bawah
+		printf("%c", 193);
 	}
-	dealokasi(&(*L)); // membersihkan memori setelah selesai input
-}
 
-void input_keyboardModify(list *L, int *baris, int *kolom, char namaFile[30])
-{
-	/* --- Kamus Data --- */ 
-	char ch; // variable penampung input
-	bool validasi_input; // variable untuk menerima hasil pengecekan tipe input
-	address P; // variable penampung address suatu node
+	gotoxy(2,12);
+	warna(warna_teks[0]);
+	printf("FILE");
+		
+	gotoxy(2,33);
+	warna(warna_teks[1]);
+	printf("EDIT");
+		
+	gotoxy(2,56);
+	warna(warna_teks[2]);
+	printf("FORMAT");
 	
-	/* --- Algoritma --- */
-	barInput(&(*baris), &(*kolom), true);
-	gotoxy(*baris,*kolom);
+	gotoxy(2,81);
+	warna(warna_teks[3]);
+	printf("VIEW");
+	
+	gotoxy(2,104);
+	warna(warna_teks[4]);
+	printf("HELP");
+	warna(7);
+	
+	// Membuat Status Bar
+	if (status_bar == true)
+	{
+		box(3,4,116,6);
+		for(int i=23; i <= 116; i = i+24)
+		{
+			gotoxy(5,i);		// Tengah
+			printf("%c", 179);
+			gotoxy(4,i);		// Atas
+			printf("%c", 194);
+			gotoxy(6,i);		// Bawah
+			printf("%c", 193);
+		}
+		barInput(*baris,*kolom,*L,pull_mode,&status_bar);	
+	}
+	
+	gotoxy(*baris+8,*kolom); // modul untuk memindahkan kursor
 	
 	while (1)
 	{
@@ -140,14 +126,13 @@ void input_keyboardModify(list *L, int *baris, int *kolom, char namaFile[30])
 		/* ctrl + s : untuk Save */
 		if(ch == 19)
 		{
-			saveModify(&(*L), namaFile);
+			if (validasi_file == true)
+			{
+				saveModify(&(*L), namaFile);
+			}else{
+				save(&(*L));
+			}
 			break;
-		}
-		
-		/* turn off tab */
-		if(ch == 9)
-		{
-			continue;
 		}
 		
 		/* Cek Validasi Input */
@@ -156,30 +141,23 @@ void input_keyboardModify(list *L, int *baris, int *kolom, char namaFile[30])
 		/* Jika tidak perlu di handling, maka input normal */ 
 		if (validasi_input != true)
 		{
-			if(*kolom == 119)
+			P = Alokasi(ch);
+			if (P != NULL)
 			{
-				continue;
+				normal_input(*(&L), P, &(*baris), &(*kolom));
 			}else{
-				P = Alokasi(ch);
-				if (P != NULL)
-				{
-					normal_input(*(&L), P, &(*baris), &(*kolom));
-					barInput(&(*baris), &(*kolom), false);
-					gotoxy(*baris,*kolom);
-				}
-				
-				else
-				{
-					Beep(1000,50);
-				}
+				Beep(1000,50);
 			}
 		}
 		
 		/* Jika perlu di handling, maka input di handle terlebih dahulu */
 		else
 		{
-			handling_input(*(&L), ch, &(*baris), &(*kolom));
+			handling_input(*(&L), ch, &(*baris), &(*kolom), &status_bar);
 		}
+		barInput(*baris,*kolom,*L,pull_mode,&status_bar); 
+		SetWindow(&max_height+5, &max_width+5, *baris, *kolom, *L);
+		gotoxy(*baris+8,*kolom);
 	}
 	dealokasi(&(*L)); // membersihkan memori setelah selesai input
 }
@@ -211,6 +189,13 @@ bool cek_input(char ch)
 		
 		// Arrow & Del
 		case -32:
+		{
+			return true;
+			break;
+		}
+		
+		// Tab
+		case 9:
 		{
 			return true;
 			break;
@@ -268,15 +253,15 @@ void normal_input(list *L, address P, int *baris, int *kolom)
 	}
 
 	*kolom = *kolom + 1;
-	gotoxy(*baris,*kolom);
+	gotoxy(*baris+8,*kolom);
 }
 
-void handling_input(list *L, char ch, int *baris, int *kolom)
+void handling_input(list *L, char ch, int *baris, int *kolom, bool *status_bar)
 {
 	// F1-F12
 	if (ch == 0)
 	{
-		ch = getch();
+		F1_12(*(&L), ch, *(&baris), *(&kolom), *(&status_bar));
 	}else
 	
 	// Backspace
@@ -288,10 +273,7 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	// Enter
 	if (ch == 13)
 	{
-		if(*baris != 26)
-		{
-			enter(*(&L), NULL, *(&baris), *(&kolom));
-		}
+		enter(*(&L), NULL, *(&baris), *(&kolom));
 		
 	}else
 	
@@ -311,6 +293,91 @@ void handling_input(list *L, char ch, int *baris, int *kolom)
 	if (ch == 27)
 	{
 		// Modul ESC
+	}
+}
+
+void F1_12(list *L, char ch, int *baris, int *kolom, bool *status_bar)
+{
+	address P;
+	ch = getch();
+	int warna_teks[5]={7,7,7,7,7};
+	
+	// F1
+	switch(ch)
+	{
+		// F1
+		case 59:
+		{
+			Pull_Down_Menu(&(*baris),&(*kolom),&(*L), &(*status_bar));
+			
+			system("cls");
+			box(3,1,116,3);
+			for(int i=23; i <= 116; i = i+24)
+			{
+				gotoxy(2,i);		// Tengah
+				printf("%c", 179);
+				gotoxy(1,i);		// Atas
+				printf("%c", 194);
+				gotoxy(3,i);		// Bawah
+				printf("%c", 193);
+			}
+		
+			gotoxy(2,12);
+			warna(warna_teks[0]);
+			printf("FILE");
+				
+			gotoxy(2,33);
+			warna(warna_teks[1]);
+			printf("EDIT");
+				
+			gotoxy(2,56);
+			warna(warna_teks[2]);
+			printf("FORMAT");
+			
+			gotoxy(2,81);
+			warna(warna_teks[3]);
+			printf("VIEW");
+			
+			gotoxy(2,104);
+			warna(warna_teks[4]);
+			printf("HELP");
+			warna(7);
+			
+			// Membuat Status Bar
+			if (*status_bar == true)
+			{
+				box(3,4,116,6);
+			for(int i=23; i <= 116; i = i+24)
+			{
+				gotoxy(5,i);		// Tengah
+				printf("%c", 179);
+				gotoxy(4,i);		// Atas
+				printf("%c", 194);
+				gotoxy(6,i);		// Bawah
+				printf("%c", 193);
+			}
+			barInput(*baris,*kolom,*L,false,&(*status_bar)); 	
+			}
+			
+			gotoxy(8,0);
+			P = Next(Head(*L));
+			while(P != NULL)
+			{
+				printf("%c", Info(P));
+				if (Info(P) == NULL)
+				{
+					printf("\n");
+				}
+				P = Next(P);
+			}
+			printf("\e[?25h");
+			break;
+		}
+		
+		default:
+		{
+			break;
+		}
 	}
 }
 
@@ -340,7 +407,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 					*baris = *baris - 1;
 					*kolom = 0;
 					Current(*L) = P;
-					gotoxy(*baris,*kolom);
+					gotoxy(*baris+8,*kolom);
 					
 				// Jika Bukan Pada Kolom Awal / Baris Berisi Suatu Karakter
 				}else{
@@ -356,7 +423,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 						*baris = *baris - 1;
 						*kolom = 0;
 						Current(*L) = P;
-						gotoxy(*baris,*kolom);
+						gotoxy(*baris+8,*kolom);
 					}else{
 						while (Info(P) != NULL)
 						{
@@ -377,9 +444,15 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 								break;
 							}
 						}
+						if (Info(P) == NULL)
+						{
+							P = Prev(P);
+							*kolom = *kolom - 1;	
+						}
+						
 						*baris = *baris - 1;
 						Current(*L) = P;
-						gotoxy(*baris,*kolom);	
+						gotoxy(*baris+8,*kolom);	
 					}
 				}
 			}
@@ -415,7 +488,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 					*baris = *baris + 1;
 					*kolom = 0;
 					Current(*L) = P;
-					gotoxy(*baris,*kolom);
+					gotoxy(*baris+8,*kolom);
 					
 				// Jika Bukan Pada Kolom Awal / Baris Berisi Suatu Karakter
 				}else{
@@ -452,7 +525,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 					}
 					*baris = *baris + 1;
 					Current(*L) = P;
-					gotoxy(*baris,*kolom);	
+					gotoxy(*baris+8,*kolom);	
 				}
 			}
 			break;
@@ -471,7 +544,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 					*kolom = 0;
 					*baris = *baris + 1;
 				}
-				gotoxy(*baris,*kolom);
+				gotoxy(*baris+8,*kolom);
 			}
 			break;
 		}
@@ -500,7 +573,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 					}
 					*baris = *baris - 1;
 				}
-				gotoxy(*baris,*kolom);
+				gotoxy(*baris+8,*kolom);
 			}
 			break;
 		}
@@ -522,9 +595,16 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 					free(Q);
 				}
 				
+				// Bersihkan Layar
+				for(int i=0; i <= last_line+10; i++)
+				{
+					gotoxy(i+8,0);
+					printf("                                                                                                                                                                                                                                                                                              ");
+				}
+				
 				// Print Layar
+				gotoxy(8,0);
 				P = Next(Head(*L));
-				system("cls");
 				while(P != NULL)
 				{
 					printf("%c", Info(P));
@@ -535,8 +615,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 					P = Next(P);
 				}
 			}
-			barInput(&(*baris), &(*kolom), true);
-			gotoxy(*baris,*kolom);
+			gotoxy(*baris+8,*kolom);
 			break;
 		}
 		
@@ -550,6 +629,7 @@ void arrows(list *L, char ch, int *baris, int *kolom)
 void enter(list *L, char ch, int *baris, int *kolom)
 {
 	address P;
+	int last_line = 0;
 	
 	P = Alokasi(ch);
 	if (Next(Current(*L)) != NULL)
@@ -568,10 +648,27 @@ void enter(list *L, char ch, int *baris, int *kolom)
 		Current(*L) = P;
 	}
 	
-	// Tampil Layar
-	system("cls");
-	P = Next(Head(*L));
+	// Hitung Baris Terakhir
+	P = Head(*L);
+	while (P != NULL)
+	{
+		if (Info(P) == NULL)
+		{
+			last_line = last_line + 1;
+		}
+		P = Next(P);
+	}
 	
+	//Bersihkan Layar
+	for(int i=0; i <= last_line+10; i++)
+	{
+		gotoxy(i+8,0);
+		printf("                                                                                                                                                                                                          ");
+	}
+	
+	// Tampil Layar
+	gotoxy(8,0);
+	P = Next(Head(*L));
 	while(P != NULL)
 	{
 		printf("%c", Info(P));
@@ -584,14 +681,14 @@ void enter(list *L, char ch, int *baris, int *kolom)
 	
 	*baris = *baris + 1;
 	*kolom = 0;
-	barInput(&(*baris), &(*kolom), true);
-	gotoxy(*baris,*kolom);
+	gotoxy(*baris+8,*kolom);
 }
 
 void backspace(list *L, char ch, int *baris, int *kolom)
 {
 	address P;
 	int count = 0;
+	int last_line = 0;
 	
 	P = Current(*L);
 	if (Current(*L) != Head(*L))
@@ -632,9 +729,17 @@ void backspace(list *L, char ch, int *baris, int *kolom)
 			}
 		}
 	}
+	
+	//Bersihkan Layar
+	for(int i=0; i <= last_line+10; i++)
+	{
+		gotoxy(i+8,0);
+		printf("                                                                                                                                                                                                          ");
+	}
 
+	//Tampil Layar
+	gotoxy(8,0);
 	P = Next(Head(*L));
-	system("cls");
 	while(P != NULL)
 	{
 		printf("%c", Info(P));
@@ -644,7 +749,5 @@ void backspace(list *L, char ch, int *baris, int *kolom)
 		}
 		P = Next(P);
 	}
-	
-	barInput(&(*baris), &(*kolom), true);
-	gotoxy(*baris,*kolom);
+	gotoxy(*baris+8,*kolom);
 }
