@@ -48,7 +48,7 @@ int main()
 	bool loop = true;
 	
 	/* --- Algoritma --- */
-//	loading(); // menampilkan tampilan loading
+	loading(); // menampilkan tampilan loading
 	adjustWindowSize(); // mengatur ukuran window
 	
 	while(loop == true)
