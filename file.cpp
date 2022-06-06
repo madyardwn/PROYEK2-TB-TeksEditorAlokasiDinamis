@@ -6,6 +6,8 @@
 #include "file.h"
 #include "design.h"
 
+#define MAX 256
+
 bool txt_extension(char const *name)
 {
 	/* --- Modul untuk mengambil ekstensi file  --- */
@@ -471,3 +473,174 @@ void renameFile(){
     }
 
 }
+
+//modul untuk hitung kata
+int hitungKata()
+{
+	FILE *fp;
+    int count = 1;
+    char filename[100];
+    char c, ch;
+
+    printf("Masukkan nama file: ");
+    scanf("%s", filename);
+    strcat(filename,".txt");
+
+    fp = fopen(filename, "r");
+
+    if (fp == NULL)
+    {
+        printf("File %s tidak tersedia", filename);
+        printf("\n\n");
+		system("pause");
+		return 1;
+    }
+    
+    //tampilkan isi file
+    puts("\nISI FILE ASLI :\n");
+    while (fp) {
+        	ch = fgetc(fp);
+       		if (ch == EOF) {
+            	break;
+        	}
+        	printf("%c", ch);
+    	}	
+			printf("\n\n");
+			fclose(fp);
+			
+	fp = fopen(filename, "r");
+    for (c = getc(fp); c != EOF; c = getc(fp))
+        if (c == ' ' || c == '\n')
+            count = count + 1;
+
+    fclose(fp);
+    printf("------------------------------------------\n");
+    printf("Jumlah kata pada file %s adalah %d  ", filename, count);
+	printf("\n\n");
+    //return 0;
+    system("pause");
+}
+
+//modul find and replace
+int finrep() 	/* -- referensi : http://see-programming.blogspot.com/2013/07/c-program-to-replace-word-in-file.html */
+{
+        FILE *fp1, *fp2;
+        char word[MAX], fname[MAX], ch;
+        char string[MAX], replace[MAX];
+        char temp[] = "temp.txt", *ptr1, *ptr2;
+
+        /* get the input file from the user */
+        printf("Masukkan nama file:");
+        fgets(fname, MAX, stdin);
+        fname[strlen(fname) - 1] = '\0';
+        strcat(fname,".txt");
+        
+        /* open input file in read mode */
+        fp1 = fopen(fname, "r");
+
+        /* error handling */
+        
+        if (!fp1) {
+                printf("File tidak tersedia!!\n");
+                system("pause");
+                return 0;
+        }
+
+        /* open temporary file in write mode */
+        fp2 = fopen(temp, "w");
+
+        /* error handling */
+        if (!fp2) {
+                printf("Tidak bisa membuka temporary file!!\n");
+                return 0;
+        }
+        
+        
+ 		// displaying file contents
+        puts("ISI FILE ASLI :\n");
+    	while (1) {
+        	ch = fgetc(fp1);
+       		if (ch == EOF) {
+            	break;
+        	}
+        	printf("%c", ch);
+    	}	
+			printf("\n\n");
+			fclose(fp1);
+        
+        
+		fp1 = fopen(fname, "r");
+        /* get the word to delete from the user */
+        printf("Masukkan kata yang ingin dicari:");
+        scanf("%s", word);
+
+        /* get the word to replace */
+        printf("Masukkan kata untuk mereplace:");
+        scanf("%s", replace);
+
+        
+
+        /* delete the given word from the file */
+        while (!feof(fp1)) {
+                strcpy(string, "\0");
+                /* read line by line from the input file */
+                fgets(string, MAX, fp1);
+
+                /*
+                 * check whether the word to delete is
+                 * present in the current scanned line
+                 */
+                if (strstr(string, word)) {
+                        ptr2 = string;
+                        while (ptr1 = strstr(ptr2, word)) {
+                                /*
+                                 * letters present before
+                                 * before the word to be replaced
+                                 */
+                                while (ptr2 != ptr1) {
+                                        fputc(*ptr2, fp2);
+                                        ptr2++;
+                                }
+                                /* skip the word to be replaced */
+                                ptr1 = ptr1 + strlen(word);
+                                fprintf(fp2, "%s", replace);
+                                ptr2 = ptr1;
+                        }
+
+                        /* characters present after the word to be replaced */
+                        while (*ptr2 != '\0') {
+                                fputc(*ptr2, fp2);
+                                ptr2++;
+                        }
+                } else {
+                        /*
+                         * current scanned line doesn't 
+                         * have the word that need to be replaced
+                         */
+                        fputs(string, fp2);
+                }
+        }
+
+        /* close the opened files */
+        fclose(fp1);
+        fclose(fp2);
+
+        /* remove the input file */
+        remove(fname);
+        /* rename temporary file name to input file name */
+        rename(temp, fname);
+        
+        //buka hasil file yg udah di replace
+        puts("\n\nISI FILE YANG SUDAH DIUBAH :\n\n");
+        fp1 = fopen(fname, "r");
+        while (1) {
+        	ch = fgetc(fp1);
+       		if (ch == EOF) {
+            	break;
+        	}
+        	printf("%c", ch);
+    	}	
+			printf("\n\n");
+			fclose(fp1);
+        system("pause");
+  }

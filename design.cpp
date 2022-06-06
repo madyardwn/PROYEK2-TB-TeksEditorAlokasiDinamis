@@ -11,7 +11,7 @@
 #define WHITE 7
 #define LIGHTM 13
 #define FIRST_MENU 1
-#define LAST_MENU 6
+#define LAST_MENU 7
 #define UP 72
 #define DOWN 80
 #define ENTER 13
@@ -204,7 +204,7 @@ void barMenu()
 bool selectionMenu(list *L)
 {
 	/* --- Kamus Data --- */
-	int opsiWarna[6] = {WHITE, WHITE, WHITE, WHITE, WHITE, WHITE}; // Array warna mula-mula
+	int opsiWarna[7] = {WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE}; // Array warna mula-mula
 	int pilihan = 1; // penanda posisi
 	char ch; // penampung input
 	char namaFile[30]; // untuk nama file
@@ -241,6 +241,10 @@ bool selectionMenu(list *L)
 		
 		gotoxy(23,5);
 		warna(opsiWarna[5]);
+		printf("	[F] Find & Replace");
+		
+		gotoxy(24,5);
+		warna(opsiWarna[6]);
 		printf("	[Q] Quit Text Editor");
 		
 		
@@ -344,8 +348,20 @@ bool selectionMenu(list *L)
 				return true; // Return True : untuk menampilkan menu kembali
 			}
 			
-			/* Exit */
+			/* find and replace di sebuuah file */
 			if(pilihan == 6)
+			{
+				system("cls"); // Clear Screen 
+				
+				warna(WHITE); // Mengembalikan warna menjadi normal 
+				ListFile(&(*L)); // Menampilkan daftar file 
+				finrep(); // mencari dan mengganti karakter atau kata dalam file
+				
+				return true; // Return True : untuk menampilkan menu kembali
+			}
+			
+			/* Exit */
+			if(pilihan == 7)
 			{
 				system("cls"); // Clear Screen
 				
@@ -420,6 +436,18 @@ bool selectionMenu(list *L)
 			return true; // Return True untuk menampilkan menu kembali
 		}else 
 		
+		/* Tombol F : find and replace */
+		if(ch == 'f' || ch == 'F')
+		{
+			system("cls"); // Clear Screen
+			
+			warna(WHITE); // Mengembalikan warna menjadi normal 
+			ListFile(&(*L)); // Menampilkan daftar file
+			finrep(); // Mencari dan mengganti karakter atau kata di dalam file
+			
+			return true; // Return True untuk menampilkan menu kembali
+		}else 
+		
 		/* Tombol Q : Quit */
 		if(ch == 'q' || ch == 'Q')
 		{
@@ -439,6 +467,7 @@ bool selectionMenu(list *L)
 			opsiWarna[3] = WHITE; // Mengembalikan warna menjadi normal 
 			opsiWarna[4] = WHITE; // Mengembalikan warna menjadi normal 
 			opsiWarna[5] = WHITE; // Mengembalikan warna menjadi normal 
+			opsiWarna[6] = WHITE; // Mengembalikan warna menjadi normal
 			
 			/* -- Merubah Warna Sesuai Pilihan --*/
 			if(pilihan == 1)
@@ -469,6 +498,11 @@ bool selectionMenu(list *L)
 			if(pilihan == 6)
 			{
 				opsiWarna[5] = LIGHTM;
+			}
+			
+			if(pilihan == 7)
+			{
+				opsiWarna[6] = LIGHTM;
 			}
 		}
 	}
@@ -501,14 +535,34 @@ void loading()
 	printf("\t========================================================================================== \n");
 	printf("\t=====                                   TEXT EDITOR                                    === \n");
 	printf("\t========================================================================================== \n\n");
-	printf("\t                                       PLEASE WAIT . . .                                   \n\n");
-	Sleep(800);
-	printf("\t                                         >>> 3 <<<                                         \n\n");
-	Sleep(1000);
-	printf("\t                                         >>> 2 <<<                                         \n\n");
-	Sleep(1000);
-	printf("\t                                         >>> 1 <<<                                         \n\n");
-	Sleep(1000);
+	
+	//loading bar
+	system("color 0F");
+  
+    // Initialize char for printing
+    char a = 177, b = 219;
+  
+    //printf("\n\n\n\n");
+    printf("\t\t\t\t\t"
+           "Loading...\n\n");
+    printf("\t\t\t\t\t");
+  
+    // Print initial loading bar
+    for (int i = 0; i < 26; i++)
+        printf("%c", a);
+  
+    // Set the cursor again starting
+    // point of loading bar
+    printf("\r");
+    printf("\t\t\t\t\t");
+  
+    // Print loading bar progress
+    for (int i = 0; i < 26; i++) {
+        printf("%c", b);
+  
+        // Sleep for 1 second
+        Sleep(30);
+    }
 	system("cls");
 }
 

@@ -14,5 +14,7 @@ void saveModify(list *L, char namaFile[30]);
 int removeFile();
 void deleteFile();
 void renameFile();
+int hitungKata();
+int finrep();
 
 #endif
