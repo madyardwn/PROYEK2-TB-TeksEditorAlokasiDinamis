@@ -70,7 +70,7 @@ bool fileToList(list *L, int *baris, int *kolom, bool fileTersedia, char namaFil
 				P = Alokasi(ch); // alokasi pembacaan ch
 				normal_input(*(&L), P, &(*baris), &(*kolom)); // representasi console
 			}
-			SetWindow(&max_height+5, &max_width+5, *baris, *kolom, *L);
+			SetWindow(&max_height+2, &max_width+2, *baris, *kolom, *L);
 		}
 		cek = true; 
 		fclose(file); // menuntup file

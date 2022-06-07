@@ -156,8 +156,8 @@ void input_keyboard(list *L, int *baris, int *kolom, char namaFile[], bool valid
 			handling_input(*(&L), ch, &(*baris), &(*kolom), &status_bar);
 		}
 		barInput(*baris,*kolom,*L,pull_mode,&status_bar); 
-		SetWindow(&max_height+5, &max_width+5, *baris, *kolom, *L);
 		gotoxy(*baris+8,*kolom);
+		SetWindow(&max_height+2, &max_width+2, *baris, *kolom, *L);
 	}
 	dealokasi(&(*L)); // membersihkan memori setelah selesai input
 }

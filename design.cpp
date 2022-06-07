@@ -703,6 +703,11 @@ void clear()
 
 void SetWindow(int *tinggi_max, int *lebar_max, int baris, int kolom, list L)
 {
+//	https://docs.microsoft.com/en-us/windows/console/setconsolewindowinfo
+//  https://docs.microsoft.com/en-us/windows/console/setconsoleactivescreenbuffer
+//  https://docs.microsoft.com/en-us/windows/console/setconsolescreenbuffersize
+//  https://stackoverflow.com/questions/12900713/reducing-console-size
+	
 	COORD coord;
 	HANDLE Handle;
 	SMALL_RECT Rect;
@@ -733,23 +738,19 @@ void SetWindow(int *tinggi_max, int *lebar_max, int baris, int kolom, list L)
 		P = Next(P);
 	}
 	
-//	// Size Height Window
-//	if (*tinggi_max < baris)
-//	{
-//		*tinggi_max = baris;
-//	}
-//	
-//	// Size Window X
-//	if (*lebar_max < kolom)
-//	{
-//		*lebar_max = kolom;
-//	}
-	
-	coord.Y = *tinggi_max+1;
-	coord.X = *lebar_max+2;
 	Handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	
+	coord.Y = *tinggi_max;
+	coord.X = *lebar_max;
+	
+	Rect.Top = 0; 
+    Rect.Left = 0; 
+    Rect.Bottom = *tinggi_max - 1; 
+    Rect.Right = *lebar_max - 1;
+    
+    SetConsoleActiveScreenBuffer(Handle);
 	SetConsoleScreenBufferSize(Handle,coord);
+	SetConsoleWindowInfo(Handle, TRUE, &Rect);
 }
 
 void gotoxy(int baris,int kolom)
