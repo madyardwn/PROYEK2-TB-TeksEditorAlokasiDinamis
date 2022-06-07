@@ -50,7 +50,7 @@ ProductVersion=
 AutoIncBuildNr=0
 SyncProduct=1
 
-[Unit1]
+[Unit2]
 FileName=design.cpp
 CompileCpp=1
 Folder=
@@ -60,7 +60,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit2]
+[Unit3]
 FileName=design.h
 CompileCpp=1
 Folder=
@@ -70,7 +70,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit3]
+[Unit4]
 FileName=file.cpp
 CompileCpp=1
 Folder=
@@ -80,7 +80,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit4]
+[Unit5]
 FileName=file.h
 CompileCpp=1
 Folder=
@@ -90,7 +90,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit5]
+[Unit6]
 FileName=input.cpp
 CompileCpp=1
 Folder=
@@ -100,18 +100,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit6]
-FileName=input.h
-CompileCpp=1
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit7]
-FileName=main.cpp
+FileName=input.h
 CompileCpp=1
 Folder=
 Compile=1
@@ -122,6 +112,16 @@ BuildCmd=
 
 [Unit9]
 FileName=themes.h
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit1]
+FileName=main.cpp
 CompileCpp=1
 Folder=
 Compile=1
