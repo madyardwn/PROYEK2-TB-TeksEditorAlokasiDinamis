@@ -732,7 +732,12 @@ void backspace(list *L, char ch, int *baris, int *kolom)
 				P = Prev(P);
 			}
 			*baris = *baris - 1;
-			*kolom = count + 1;
+			if (count == 0)
+			{
+				*kolom = count;
+			}else{
+				*kolom = count + 1;
+			}
 		}
 	}
 	
