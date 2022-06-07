@@ -74,6 +74,23 @@ void creadit()
 	box(92,1,118,26);
 }
 
+void tampil_list(list *L)
+{	
+	system("cls");
+	address P;
+	P = Next(Head(*L));
+	
+	while(P != NULL)
+	{
+		printf("%c", Info(P));
+		if (Info(P) == NULL)
+		{
+			printf("\n");
+		}
+		P = Next(P);
+	}
+}
+
 void displayLogo()
 {
 	warna(9); // modul mengubah warna
@@ -588,23 +605,6 @@ void border()
 	gotoxy(0,0);	
 }
 
-void tampil_list(list *L)
-{	
-	system("cls");
-	address P;
-	P = Next(Head(*L));
-	
-	while(P != NULL)
-	{
-		printf("%c", Info(P));
-		if (Info(P) == NULL)
-		{
-			printf("\n");
-		}
-		P = Next(P);
-	}
-}
-
 int jumlah_karakter(list L)
 {
 	int count_char = 0;
@@ -659,48 +659,6 @@ int jumlah_kata(list L)
 	return count_word;
 }
 
-void clear()
-{
-    /* Origin : https://docs.microsoft.com/en-us/windows/console/clearing-the-screen */
-    /* Dengan penyesuaian */
-    HANDLE hStdout;
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    SMALL_RECT scrollRect;
-    COORD scrollTarget;
-    CHAR_INFO fill;
-
-    hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    // Get the number of character cells in the current buffer.
-    if (!GetConsoleScreenBufferInfo(hStdout, &csbi))
-    {
-        return;
-    }
-
-    // Scroll the rectangle of the entire buffer.
-    scrollRect.Left = 0;
-    scrollRect.Top = 1;
-    scrollRect.Right = csbi.dwSize.X;
-    scrollRect.Bottom = csbi.dwSize.Y;
-
-    // Scroll it upwards off the top of the buffer with a magnitude of the entire height.
-    scrollTarget.X = 0;
-    scrollTarget.Y = (SHORT)(0 - csbi.dwSize.Y);
-
-    // Fill with empty spaces with the buffer's default text attribute.
-    fill.Char.UnicodeChar = TEXT(' ');
-    fill.Attributes = csbi.wAttributes;
-
-    // Do the scroll
-    ScrollConsoleScreenBuffer(hStdout, &scrollRect, NULL, scrollTarget, &fill);
-
-    // Move the cursor to the top left corner too.
-    csbi.dwCursorPosition.X = 0;
-    csbi.dwCursorPosition.Y = 0;
-
-    SetConsoleCursorPosition(hStdout, csbi.dwCursorPosition);
-}
-
 void SetWindow(int *tinggi_max, int *lebar_max, int baris, int kolom, list L)
 {
 	COORD coord;
@@ -733,18 +691,6 @@ void SetWindow(int *tinggi_max, int *lebar_max, int baris, int kolom, list L)
 		P = Next(P);
 	}
 	
-//	// Size Height Window
-//	if (*tinggi_max < baris)
-//	{
-//		*tinggi_max = baris;
-//	}
-//	
-//	// Size Window X
-//	if (*lebar_max < kolom)
-//	{
-//		*lebar_max = kolom;
-//	}
-	
 	coord.Y = *tinggi_max+1;
 	coord.X = *lebar_max+2;
 	Handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -762,24 +708,6 @@ void gotoxy(int baris,int kolom)
     coord.X = kolom;
     coord.Y = baris;
     SetConsoleCursorPosition(handle,coord);
-}
-
-void GetWindowSize(int *height, int *width)
-{
-	// Sumber
-	// https://stackoverflow.com/questions/23369503/get-size-of-terminal-window-rows-columns
-	
-	// Deklarasi
-	HANDLE handle;
-	CONSOLE_SCREEN_BUFFER_INFO size;
-	handle = GetStdHandle(STD_OUTPUT_HANDLE);
-	int column, row;
-	
-	// Ambil Informasi Screen Buffer
-	GetConsoleScreenBufferInfo(handle,&size);
-	// Ambil ukuran maksimal tinggi (y) dan lebar (x)
-	*width = size.dwSize.X;
-    *height = size.dwSize.Y;
 }
 
 void Pull_Down_Menu(int *baris, int *kolom, list *L, bool *status_bar)
@@ -1582,14 +1510,14 @@ void Feature_Selection(list *L, int pilihan, bool *pull_mode, int *baris, int *k
 						// NEW FILE
 						case 1:
 						{
-//							gotoxy(13,4);
-//							printf("Apakah kamu akan menyimpan file yang kamu tulis? (Y/N)\n");
-//							fflush(stdin);
-//							ch = toupper(getch());
-//							if (ch == 'Y')
-//							{
-//								save(&(*L));
-//							}
+							gotoxy(13,4);
+							printf("Apakah kamu akan menyimpan file yang kamu tulis? (Y/N)\n");
+							fflush(stdin);
+							ch = toupper(getch());
+							if (ch == 'Y')
+							{
+								save(&(*L));
+							}
 							dealokasi(&(*L));
 							create_text_editor(&(*L));
 							*baris = 0;
@@ -1738,7 +1666,20 @@ void Feature_Selection(list *L, int pilihan, bool *pull_mode, int *baris, int *k
 				// HELP
 				case 5:
 				{
+					gotoxy(13,4);
+					printf("CTRL + S = Save File");
+					gotoxy(14,4);
+					printf("CTRL + Q = Cancel");
+					gotoxy(15,4);
+					printf("Mode Pull Down");
 					warna(7);
+					
+					gotoxy(17,4);
+					system("pause");
+					
+					status = false;
+					*pull_mode = false;
+					
 					break;
 				}
 			}

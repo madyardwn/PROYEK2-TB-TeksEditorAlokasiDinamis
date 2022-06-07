@@ -4,7 +4,6 @@
 void save(list *L);
 void FileToList(list *L, int *baris, int *kolom, bool fileTersedia);
 void modify(list *L);
-void lastCursor(int *row, int *col);
 void ListFile(list *L);
 bool txt_extension(char const *name);
 void inputNamaFile(char karakter[25]);
@@ -14,7 +13,6 @@ void saveModify(list *L, char namaFile[30]);
 int removeFile();
 void deleteFile();
 void renameFile();
-int hitungKata();
 int finrep();
 
 #endif

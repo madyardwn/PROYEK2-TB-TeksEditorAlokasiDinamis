@@ -474,53 +474,6 @@ void renameFile(){
 
 }
 
-//modul untuk hitung kata
-int hitungKata()
-{
-	FILE *fp;
-    int count = 1;
-    char filename[100];
-    char c, ch;
-
-    printf("Masukkan nama file: ");
-    scanf("%s", filename);
-    strcat(filename,".txt");
-
-    fp = fopen(filename, "r");
-
-    if (fp == NULL)
-    {
-        printf("File %s tidak tersedia", filename);
-        printf("\n\n");
-		system("pause");
-		return 1;
-    }
-    
-    //tampilkan isi file
-    puts("\nISI FILE ASLI :\n");
-    while (fp) {
-        	ch = fgetc(fp);
-       		if (ch == EOF) {
-            	break;
-        	}
-        	printf("%c", ch);
-    	}	
-			printf("\n\n");
-			fclose(fp);
-			
-	fp = fopen(filename, "r");
-    for (c = getc(fp); c != EOF; c = getc(fp))
-        if (c == ' ' || c == '\n')
-            count = count + 1;
-
-    fclose(fp);
-    printf("------------------------------------------\n");
-    printf("Jumlah kata pada file %s adalah %d  ", filename, count);
-	printf("\n\n");
-    //return 0;
-    system("pause");
-}
-
 //modul find and replace
 int finrep() 	/* -- referensi : http://see-programming.blogspot.com/2013/07/c-program-to-replace-word-in-file.html */
 {
